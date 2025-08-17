@@ -34,23 +34,28 @@ import {
 } from "@/components/ui/form";
 import { useVerifySigninMutation } from "@/redux/api/authApi";
 import { email } from "zod";
+import { UserRole } from "@/enum";
+import { signIn } from "next-auth/react";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [verifySignIn, { isLoading }] = useVerifySigninMutation();
 
-  const router = useRouter();
-
   const onsubmit = async (data: FieldValues) => {
     try {
       setError("");
-      await verifySignIn({
+      const response = await verifySignIn({
         email: data.email,
         password: data.password,
       }).unwrap();
-
-      router.push("/dashboard");
+      const role = response?.data?.role;
+      await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        callbackUrl: role === UserRole.Admin ? "/admin" : "/dashboard",
+        redirect: true,
+      });
     } catch (error: any) {
       setError(
         error?.message || error?.data?.message || "Something went wrong"
@@ -166,10 +171,7 @@ const Login = () => {
             <CardFooter className="text-center">
               <p className="text-sm text-muted-foreground">
                 Dont have an account?{" "}
-                <Link
-                  href="/auth/register"
-                  className="text-primary hover:underline"
-                >
+                <Link href="/register" className="text-primary hover:underline">
                   Sign up
                 </Link>
               </p>
@@ -183,10 +185,10 @@ const Login = () => {
             </CardHeader>
             <CardContent className="text-xs space-y-2">
               <div>
-                <strong>Admin:</strong> admin@lms.com / admin123
+                <strong>Admin:</strong> admin@lms.com / $Admin123
               </div>
               <div>
-                <strong>Student:</strong> student@lms.com / student123
+                <strong>Student:</strong> student@lms.com / $Student123
               </div>
             </CardContent>
           </Card>

@@ -14,23 +14,34 @@ export const authOption: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const res = await fetch(`${process.env.API_BASEURL}/auth/signin`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(credentials),
-        });
-        if (!res.ok) {
-          throw new Error("user not found");
-        }
-        const result = await res.json();
-        const user = result?.data;
-        if (!result.data) {
-          throw new Error("user not found");
-        }
-        if (res.ok && user.accessToken) {
+        try {
+          console.log({ credentials });
+          const res = await fetch(`${process.env.API_BASE_URL}/auth/signin`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          });
+
+          if (!res.ok) {
+            throw new Error("Invalid credentials or user not found");
+          }
+
+          const result = await res.json();
+          console.log("auth result", result);
+
+          const user = result?.data;
+          if (!user || !user.accessToken) {
+            throw new Error("User data or access token missing");
+          }
+
           return user;
+        } catch (err: any) {
+          console.error("Authorize error:", err.message || err);
+          throw new Error("Login failed. Please try again.");
         }
-        return null;
       },
     }),
   ],
@@ -38,11 +49,6 @@ export const authOption: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        // token.accessToken = user.accessToken;
-        // token.refreshToken = user.refreshToken;
-        // token.user = user.user;
-        // token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
-
         token.id = user.id;
         token.isEmailVerified = user.isEmailVerified;
         token.name = user.name;
@@ -51,8 +57,6 @@ export const authOption: NextAuthOptions = {
         token.accessToken = user.accessToken as string;
         token.accessTokenExpires = user.accessTokenExpiresAt;
         token.role = user.role;
-
-        // token.accessTokenExpires = Date.now() + 15 * 60 * 1000;
       }
       if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
         return token;
@@ -76,10 +80,11 @@ export const authOption: NextAuthOptions = {
       return session;
     },
   },
+
   session: { strategy: "jwt" },
   pages: {
-    signIn: "/sign-in",
-    error: "/sign-in",
+    signIn: "/login",
+    error: "/login",
   },
 
   secret: process.env.NEXTAUTH_SECRET,
@@ -88,6 +93,7 @@ export const authOption: NextAuthOptions = {
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     console.log("Refreshing access token...");
+
     const res = await fetch(`${process.env.API_BASEURL}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -105,10 +111,10 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       accessToken: refreshed.data.accessToken,
       accessTokenExpires:
         refreshed?.data?.accessTokenExpiresAt ?? token.accessTokenExpires,
-      refreshToken: refreshed.data.refreshToken ?? token.refreshToken, // if provided
+      refreshToken: refreshed.data.refreshToken ?? token.refreshToken,
     };
-  } catch (err) {
-    console.error("Error refreshing token", err);
+  } catch (err: any) {
+    console.error("Error refreshing token", err.message || err);
     return {
       ...token,
       error: "RefreshTokenError",

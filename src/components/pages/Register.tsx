@@ -10,11 +10,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import {
   Card,
   CardContent,
@@ -29,34 +28,38 @@ import { useSignUpMutation } from "@/redux/api/authApi";
 import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RegisterFormData, registerSchema } from "@/validation/auth.validation";
+import { signIn } from "next-auth/react";
 const RegisterPage = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
-  const [register, { isLoading }] = useSignUpMutation();
-  const router = useRouter();
+  const [register] = useSignUpMutation();
+  const [isLoading, setLoading] = useState(false);
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: "",
+      phone: "",
     },
   });
 
   const onsubmit = async (data: FieldValues) => {
     try {
-      setError("");
+      setLoading(true);
       await register(data).unwrap();
-
-      router.push("/dashboard");
+      await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        callbackUrl: "/dashboard", // 👈 redirect URL
+        redirect: true,
+      });
     } catch (error: any) {
+      setLoading(false);
+      console.log(error);
       setError(
         error?.message || error?.data?.message || "Something went wrong"
       );
@@ -81,13 +84,13 @@ const RegisterPage = () => {
               >
                 <FormField
                   control={form.control}
-                  name="fullName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
                       <FormControl>
                         <Input
-                          id="fullName"
+                          id="name"
                           placeholder="Enter your full name"
                           {...field}
                         />
@@ -106,6 +109,25 @@ const RegisterPage = () => {
                         <Input
                           id="email"
                           placeholder="Enter your email address"
+                          // className="h-11"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="tel"
+                          id="phone"
+                          placeholder="Enter your phone number"
                           // className="h-11"
                           {...field}
                         />
@@ -206,7 +228,7 @@ const RegisterPage = () => {
           <CardFooter className="text-center">
             <p className="text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/auth/login" className="text-primary hover:underline">
+              <Link href="/login" className="text-primary hover:underline">
                 Sign in
               </Link>
             </p>
