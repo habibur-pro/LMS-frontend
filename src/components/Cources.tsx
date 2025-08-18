@@ -89,7 +89,7 @@ const Courses = async () => {
                 </div>
               </CardContent>
               <CardFooter className="p-6 pt-0 space-y-2 flex gap-3">
-                <Link href={`/courses/${course.id}`} className="w-full">
+                <Link href={`/courses/${course.slug}`} className="w-full">
                   <Button variant="outline" className="w-full bg-transparent">
                     View Details
                   </Button>
