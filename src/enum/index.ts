@@ -7,3 +7,9 @@ export enum LectureContentType {
   Pdf = "pdf",
   Text = "text",
 }
+export enum CourseStatus {
+  UPCOMING = "upcoming",
+  DRAFTED = "drafted",
+  PUBLISHED = "published",
+  UNPUBLISHED = "unPublished",
+}
