@@ -32,7 +32,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export const getCourseCounts = (courses: ICourse[]) => {
+const getCourseCounts = (courses: ICourse[]) => {
   return courses?.reduce(
     (acc, course) => {
       switch (course.status) {
