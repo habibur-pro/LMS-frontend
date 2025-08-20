@@ -23,6 +23,7 @@ import {
   Loader2,
   CheckCircle,
   ShoppingCart,
+  Loader,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +39,8 @@ export default function PurchasePage() {
   const router = useRouter();
   const session = useSession();
   const user = session.data?.user;
-  const [placeOrder] = usePlaceOrderMutation();
+  // console.log("user", user);
+  const [placeOrder, { isLoading: orderLoading }] = usePlaceOrderMutation();
   const slug = params.slug as string;
   const { data: courseRes, isLoading } = useGetCourseQuery(slug);
   const course: ICourse = courseRes?.data;
@@ -48,6 +50,7 @@ export default function PurchasePage() {
         courseId: course.id,
         userId: user?.id,
       }).unwrap();
+
       const url = response?.data?.url;
       router.push(url);
     } catch (error: any) {
@@ -58,7 +61,7 @@ export default function PurchasePage() {
     }
   };
 
-  if (!course) {
+  if (isLoading || !course) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -127,9 +130,11 @@ export default function PurchasePage() {
               </div>
               <Button
                 onClick={handlePlaceOrder}
+                disabled={orderLoading}
                 size="lg"
                 className="w-full mb-4"
               >
+                {orderLoading && <Loader className="w-5 h-4 animate-spin" />}
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Checkout
               </Button>

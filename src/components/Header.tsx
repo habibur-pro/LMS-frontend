@@ -38,11 +38,6 @@ export default function Header() {
     signOut();
   };
 
-  const navigation = [
-    ...(user ? [{ name: "My Courses", href: "/my-courses" }] : []),
-    ...(user?.role === "admin" ? [{ name: "Admin", href: "/admin" }] : []),
-  ];
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,19 +48,6 @@ export default function Header() {
               <span className="text-xl font-bold">Minimal LLM</span>
             </Link>
           </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
 
           {/* Desktop User Menu */}
           <div className="hidden md:flex items-center space-x-4">
@@ -93,12 +75,6 @@ export default function Header() {
                     </div>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard">
-                      <User className="mr-2 h-4 w-4" />
-                      Dashboard
-                    </Link>
-                  </DropdownMenuItem>
                   {user?.role === UserRole.Student && (
                     <DropdownMenuItem asChild>
                       <Link href="/my-courses">
@@ -152,19 +128,6 @@ export default function Header() {
                   <BookOpen className="h-6 w-6 text-primary" />
                   <span className="text-xl font-bold">LMS Platform</span>
                 </Link>
-
-                <nav className="flex flex-col space-y-2">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-2"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </nav>
 
                 {user ? (
                   <div className="border-t pt-4 space-y-2">

@@ -32,7 +32,21 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     (sum, module) => sum + (module?.lectures?.length || 0),
     0
   );
-
+  if (!course) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 text-center px-4">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Course Not Found
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          The course you are looking for does not exist or has been removed.
+        </p>
+        <Link href="/" passHref>
+          <Button size="lg">Go Back to Homepage</Button>
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* <Navigation type="user" /> */}
@@ -75,7 +89,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
               <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
                 <div className="flex items-center space-x-1">
                   <BookOpen className="w-4 h-4" />
-                  <span>{course.modules.length} modules</span>
+                  <span>{course?.modules?.length} modules</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock className="w-4 h-4" />
@@ -83,7 +97,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock className="w-4 h-4" />
-                  <span>{minutesToHours(course.duration)}</span>
+                  <span>{minutesToHours(course?.duration)}</span>
                 </div>
               </div>
             </div>
@@ -253,7 +267,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 </div>
 
                 {/* CTA Button */}
-                <Link href={`/courses/${course.slug}/purchase`}>
+                <Link href={`/courses/${course.slug}/checkout`}>
                   <Button size="lg" className="w-full mb-4">
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Enroll on course
@@ -277,7 +291,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                   <div className="space-y-3">
                     {[
                       `5 on-demand video lectures`,
-                      `${course.modules.length} comprehensive modules`,
+                      `${course?.modules?.length} comprehensive modules`,
                       "Downloadable resources and PDFs",
                       "Full lifetime access",
                       "Access on mobile and desktop",
