@@ -41,7 +41,7 @@ export const CourseFormSchema = z
       CourseStatus.UNPUBLISHED,
     ]),
 
-    modules: z.array(moduleSchema).default([]),
+    modules: z.array(moduleSchema),
   })
   .superRefine((val, ctx) => {
     if (val.discountedPrice && val.discountedPrice > val.price) {

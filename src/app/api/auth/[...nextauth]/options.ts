@@ -36,7 +36,7 @@ export const authOption: NextAuthOptions = {
           if (!user || !user.accessToken) {
             throw new Error("User data or access token missing");
           }
-
+          console.log("login user", user);
           return user;
         } catch (err: any) {
           console.error("Authorize error:", err.message || err);
@@ -58,11 +58,11 @@ export const authOption: NextAuthOptions = {
         token.accessTokenExpires = user.accessTokenExpiresAt;
         token.role = user.role;
       }
-      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
-        return token;
-      }
       if (trigger === "update" && session) {
         return { ...token, ...session };
+      }
+      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+        return token;
       }
       return await refreshAccessToken(token);
     },
@@ -90,7 +90,7 @@ export const authOption: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-async function refreshAccessToken(token: JWT): Promise<JWT> {
+async function refreshAccessToken(token: JWT): Promise<JWT | null> {
   try {
     console.log("Refreshing access token...");
 
@@ -115,10 +115,11 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     };
   } catch (err: any) {
     console.error("Error refreshing token", err.message || err);
-    return {
-      ...token,
-      error: "RefreshTokenError",
-      accessToken: "",
-    };
+    return null;
+    // return {
+    //   ...token,
+    //   error: "RefreshTokenError",
+    //   accessToken: "",
+    // };
   }
 }

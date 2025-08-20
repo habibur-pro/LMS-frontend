@@ -45,7 +45,7 @@ export default function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
               <BookOpen className="h-6 w-6 " />
-              <span className="text-xl font-bold">Minimal LLM</span>
+              <span className="text-xl font-bold">Minimal LMS</span>
             </Link>
           </div>
 
@@ -77,9 +77,9 @@ export default function Header() {
                   <DropdownMenuSeparator />
                   {user?.role === UserRole.Student && (
                     <DropdownMenuItem asChild>
-                      <Link href="/my-courses">
+                      <Link href="/my-class">
                         <GraduationCap className="mr-2 h-4 w-4" />
-                        My Courses
+                        My Class
                       </Link>
                     </DropdownMenuItem>
                   )}

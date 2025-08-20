@@ -3,6 +3,7 @@ export enum tagTypes {
   COURSE = "course",
   USERS = "user",
   ORDERS = "orders",
+  MYCLASS = "myclass",
 }
 
 // Automatically derive the list from the enum
