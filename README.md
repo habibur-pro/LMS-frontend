@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LMS Platform
 
-## Getting Started
+A **simple and powerful Learning Management System (LMS)** built with **Next.js**.  
+This platform allows admins to create courses, manage users, track progress, and process payments securely.
 
-First, run the development server:
+---
 
+## 🌟 Key Features
+
+### 🔐 Authentication & Security
+- Secure **user authentication** with **Next.js** and **JWT access/refresh tokens**.
+- Role-based access control: Admin, Teacher, Student, etc.
+- Protected routes and secure API endpoints.
+
+### 📚 Course Management
+- Add, edit, and delete courses with multiple modules and lectures.
+- **Image and video upload** for course content.
+- Track course progress for students.
+
+### 👥 User & Order Management
+- Manage users, assign courses, and track progress.
+- Students can enroll in courses.
+- Admins can manage orders and view payment history.
+
+### 💳 Payment System
+- Integrated **SSL-enabled payment gateway** for course purchases.
+- Secure transaction handling and receipts.
+
+### 📈 Course Progress Tracking
+- Unlock lectures only after completing previous ones.
+- Complete modules to unlock next modules.
+- Track overall course completion.
+
+---
+
+## 🧩 Challenges Solved
+- Create a **Scalable and efficient Database schema** for store data.
+- Implement **Course watch tracker with lock unlock**.
+
+
+---
+
+## 🚀 Run Project Locally
+
+1. Clone the repository:  
 ```bash
-npm run dev
-# or
+git clone https://github.com/habibur-pro/LMS-frontend
+cd LMS-frontend
+
+2. Install dependencies:
+yarn install
+
+3. Configure environment variables (.env):
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1
+API_BASE_URL=http://localhost:5000/api/v1
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=f3ff4d05e170bc343869bfd0bad12cbded7aff1b105b23526dbdf3782582ee74
+
+4. Run the development server:
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+5. Open your browser: http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+LMS Platform Live URL
+https://llm-minimal.vercel.app/
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+backend github repo : https://github.com/habibur-pro/LLM-backend
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+🛠️ Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
+Frontend: Typescript, Next.js, React, Tailwind CSS, Redux, Shadecn, zod
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Backend: Nodejs, expressJs, jwt, bcrypt, cloudinary, 
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Database: MongoDB, Mongoose
 
-## Deploy on Vercel
+Payments:  SSLCommerz
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Others: React Player for video lectures, Email Notifications
