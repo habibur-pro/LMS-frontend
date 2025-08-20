@@ -1,16 +1,18 @@
-import { LectureContentType } from "@/enum";
+import {
+  CourseStatus,
+  LectureContentType,
+  OrderStatus,
+  PaymentStatus,
+  UserRole,
+} from "@/enum";
 
-export interface ICourse {
+export interface IUser {
   id: string;
-  title: string;
-  slug: string;
-  price: number;
-  description: string;
-  thumbnail: string;
-  totalSeat: number;
-  availableSeat: number;
-  modules: Array<IModule>;
-  isPublished: boolean;
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,7 +20,6 @@ export interface ICourse {
 export interface IModule {
   id: string;
   title: string;
-  courseId: string;
   moduleNumber: number;
   lectures: Array<ILecture>;
   isFree: boolean;
@@ -28,10 +29,55 @@ export interface IModule {
 
 export interface ILecture {
   id: string;
-  moduleId: string;
   title: string;
   content: string;
   contentType: LectureContentType;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICourse {
+  id: string;
+  title: string;
+  slug: string;
+  price: number;
+  discountedPrice: number;
+  description: string;
+  thumbnail: string;
+  coverPhoto: string;
+  duration: number;
+  totalSeat: number;
+  availableSeat: number;
+  modules: Array<IModule>;
+  tags: string[];
+  learningPoints: string[];
+  requirements: string[];
+  faqs: { question: string; answer: string }[];
+  instructor: IUser;
+  status: CourseStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IOrder {
+  id: string;
+  amount: number;
+  status: OrderStatus;
+  payment: IPayment; // ObjectId (Payment)
+  user: IUser; // ObjectId (User)
+  course: ICourse; // ObjectId[] (Course)
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPayment {
+  id: string;
+  amount: number;
+  status: PaymentStatus;
+  gateway: string;
+  transactionId: string;
+  user: IUser; // ObjectId (User)
+  order: IOrder; // ObjectId (Order)
   createdAt: Date;
   updatedAt: Date;
 }

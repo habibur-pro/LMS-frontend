@@ -14,7 +14,15 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.COURSE],
     }),
+    // get all course
+    getAllCourse: build.query({
+      query: () => ({
+        url: `${ENDPOINT}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.COURSE],
+    }),
   }),
 });
 
-export const { useAddCourseMutation } = courseApi;
+export const { useAddCourseMutation, useGetAllCourseQuery } = courseApi;

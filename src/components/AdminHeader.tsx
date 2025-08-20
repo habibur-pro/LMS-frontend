@@ -37,7 +37,7 @@ const AdminHeader = () => {
 
         <div className="flex items-center justify-between space-x-4 ">
           <div className="flex items-center gap-x-3">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

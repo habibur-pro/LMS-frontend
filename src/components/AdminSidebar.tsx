@@ -1,18 +1,27 @@
-import { BarChart3, BookOpen, Settings, Users, X } from "lucide-react";
+"use client";
+import {
+  BarChart3,
+  BookOpen,
+  Settings,
+  ShoppingBag,
+  Users,
+  X,
+} from "lucide-react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hook";
 import { closeSidebar } from "@/redux/features/sidebarSlice";
-
+import { usePathname } from "next/navigation";
 const AdminSidebar = () => {
   const isOpenSidebar = useAppSelector((state) => state.sidebarToggle.isOpen);
   const dispatch = useAppDispatch();
+  const pathname = usePathname();
   const sidebarItems = [
     { name: "Courses", href: "/admin/courses", icon: BookOpen },
     { name: "Students", href: "/admin/students", icon: Users },
-    { name: "Watch History", href: "/admin/watch-history", icon: BarChart3 },
-    { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-    { name: "Settings", href: "/admin/settings", icon: Settings },
+    { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
+    // { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+    // { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (
@@ -45,17 +54,24 @@ const AdminSidebar = () => {
 
         <nav className="mt-6">
           <div className="px-3">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="flex items-center px-3 py-2 mt-1 text-gray-600 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                onClick={() => dispatch(closeSidebar())}
-              >
-                <item.icon className="h-5 w-5 mr-3" />
-                {item.name}
-              </Link>
-            ))}
+            {sidebarItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`flex items-center px-3 py-2 mt-1 rounded-lg transition-colors ${
+                    isActive
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  }`}
+                  onClick={() => dispatch(closeSidebar())}
+                >
+                  <item.icon className="h-5 w-5 mr-3" />
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
         </nav>
       </div>

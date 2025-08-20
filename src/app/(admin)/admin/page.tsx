@@ -1,5 +1,8 @@
+import { redirect } from "next/navigation";
+
 const page = () => {
-  return <div>Admin page</div>;
+  redirect("/admin/courses");
+  // return <div>Admin page</div>;
 };
 
 export default page;
