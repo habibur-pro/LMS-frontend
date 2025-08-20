@@ -36,7 +36,7 @@ export const authOption: NextAuthOptions = {
           if (!user || !user.accessToken) {
             throw new Error("User data or access token missing");
           }
-
+          console.log("login user", user);
           return user;
         } catch (err: any) {
           console.error("Authorize error:", err.message || err);

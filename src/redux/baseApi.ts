@@ -8,6 +8,7 @@ export const baseApi = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL as string,
     prepareHeaders: async (headers) => {
       const session = await getSession();
+      console.log("session base api", session);
       if (session?.user?.accessToken) {
         headers.set("authorization", `Bearer ${session?.user?.accessToken}`);
       }

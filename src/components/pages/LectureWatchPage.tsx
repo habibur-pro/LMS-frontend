@@ -1,0 +1,225 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import ReactPlayer from "react-player";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Search, ChevronDown, Clock, Lock, Play, FileText } from "lucide-react";
+import {
+  useGetSingleClassQuery,
+  useNextLectureMutation,
+  usePreviousLectureMutation,
+} from "@/redux/api/myClassApi";
+import { IMyClassWithProgress, IModule, ILecture } from "@/types";
+import { toast } from "sonner";
+
+const LectureWatchPage = () => {
+  const params = useParams();
+  const classId = params.id as string;
+
+  const { data: myClassRes, isLoading } = useGetSingleClassQuery(classId, {
+    skip: !classId,
+  });
+  const [nextLectureMutation] = useNextLectureMutation();
+  const [prevLectureMutation] = usePreviousLectureMutation();
+
+  const myClass: IMyClassWithProgress | undefined = myClassRes?.data;
+
+  const [currentModule, setCurrentModule] = useState<IModule | null>(null);
+  const [currentLecture, setCurrentLecture] = useState<ILecture | null>(null);
+
+  // Set default lecture when data loads
+  useEffect(() => {
+    if (myClass?.course?.modules?.length) {
+      const firstUnlockedModule = myClass.course.modules.find((mod) =>
+        mod.lectures.some((lec) => lec.isUnlocked)
+      );
+      if (firstUnlockedModule) {
+        setCurrentModule(firstUnlockedModule);
+        const firstUnlockedLecture = firstUnlockedModule.lectures.find(
+          (lec) => lec.isUnlocked
+        );
+        setCurrentLecture(
+          firstUnlockedLecture || firstUnlockedModule.lectures[0]
+        );
+      }
+    }
+  }, [myClass]);
+
+  const handleNextLecture = async () => {
+    if (!classId) return;
+    try {
+      const res = await nextLectureMutation(classId).unwrap();
+      if (res?.data?.currentLecture) {
+        setCurrentModule(res.data.currentModule);
+        setCurrentLecture(res.data.currentLecture);
+      }
+    } catch (err: any) {
+      console.log("Next lecture error:", err);
+      toast.error(
+        err?.data?.message || err?.message || "something went wrong!"
+      );
+    }
+  };
+
+  const handlePrevLecture = async () => {
+    if (!classId) return;
+    try {
+      const res = await prevLectureMutation(classId).unwrap();
+      if (res?.data?.currentLecture) {
+        setCurrentModule(res.data.currentModule);
+        setCurrentLecture(res.data.currentLecture);
+      }
+    } catch (err: any) {
+      console.log("Previous lecture error:", err);
+      toast.error(
+        err?.data?.message || err?.message || "something went wrong!"
+      );
+    }
+  };
+
+  if (isLoading || !myClass)
+    return <div className="text-center py-10">Loading...</div>;
+
+  return (
+    <div className="container mx-auto py-8 flex flex-col lg:flex-row gap-8">
+      {/* Video Player */}
+      <div className="flex-1 w-full">
+        {currentLecture && (
+          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
+            <ReactPlayer
+              src={currentLecture.content}
+              width="100%"
+              height="100%"
+              className="absolute top-0 left-0"
+              controls
+            />
+          </div>
+        )}
+        <div className="flex justify-end pt-3 gap-x-3">
+          <Button size="lg" variant="secondary" onClick={handlePrevLecture}>
+            Previous
+          </Button>
+          <Button
+            size="lg"
+            variant="default"
+            className="bg-primary"
+            onClick={handleNextLecture}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+
+      {/* Modules List */}
+      <div className="flex-1 w-full lg:max-w-md">
+        <Card className="py-5 mb-5 w-full lg:w-[97%]">
+          <CardContent>
+            <Progress value={myClass.progress} className="h-3" />
+            <div className="relative mt-5">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                id="lecture-search"
+                type="text"
+                placeholder="Search lectures..."
+                className="pl-9"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6 overflow-y-auto max-h-[80vh] pr-2">
+          {myClass.course.modules.map((module) => (
+            <Card
+              key={module.id}
+              className="transition-all duration-200 hover:shadow-lg border border-border py-0"
+            >
+              <Collapsible defaultOpen={currentModule?.id === module.id}>
+                <CollapsibleTrigger asChild>
+                  <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors duration-200 p-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-foreground">
+                        {module.title}
+                      </h3>
+                      <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 ml-4" />
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                      <div className="flex items-center gap-1">
+                        <FileText className="w-4 h-4" />
+                        <span>{module.lectures.length} Lectures</span>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <CardContent className="pt-0 pb-6 px-6">
+                    <div className="space-y-3">
+                      {module.lectures.map((lecture, index) => {
+                        const isActive = currentLecture?._id === lecture._id;
+                        return (
+                          <div
+                            key={lecture._id}
+                            onClick={() =>
+                              lecture.isUnlocked && setCurrentLecture(lecture)
+                            }
+                            className={`group flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 ${
+                              isActive
+                                ? "bg-primary/10 border-primary"
+                                : lecture.isUnlocked
+                                ? "hover:bg-muted/30 hover:border-border cursor-pointer"
+                                : "bg-muted/20 border-border cursor-not-allowed"
+                            }`}
+                          >
+                            <div
+                              className={`flex-shrink-0 ${
+                                lecture.isUnlocked
+                                  ? "text-primary"
+                                  : "text-muted-foreground"
+                              }`}
+                            >
+                              {lecture.isUnlocked ? (
+                                <Play className="w-5 h-5" />
+                              ) : (
+                                <Lock className="w-5 h-5" />
+                              )}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <h4
+                                className={`text-base font-medium truncate ${
+                                  isActive
+                                    ? "text-primary font-semibold"
+                                    : lecture.isUnlocked
+                                    ? "text-foreground group-hover:text-primary"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {index + 1}. {lecture.title}
+                              </h4>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
+              </Collapsible>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LectureWatchPage;
