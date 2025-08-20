@@ -1,5 +1,5 @@
 "use client";
-import { LogOut, Menu, User } from "lucide-react";
+import { LogOut, Menu, Settings, User } from "lucide-react";
 import { Button } from "./ui/button";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAppDispatch } from "@/redux/hook";
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import Link from "next/link";
 const AdminHeader = () => {
   const dispatch = useAppDispatch();
   const session = useSession();
@@ -62,6 +63,12 @@ const AdminHeader = () => {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/admin">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Admin Panel
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out

@@ -16,10 +16,13 @@ import {
   Edit,
   ShoppingCart,
   Star,
+  Users2Icon,
 } from "lucide-react";
 import { getCourses } from "@/utils/getCourses";
 import { ICourse } from "@/types";
 import { Badge } from "./ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { minutesToHours } from "@/utils/munitesToHours";
 
 const Courses = async () => {
   const { courses } = await getCourses();
@@ -28,12 +31,12 @@ const Courses = async () => {
       {courses && courses?.length > 0 ? (
         <div
           id="courses"
-          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 py-8"
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 py-8 gap-5"
         >
           {courses?.map((course: ICourse) => (
             <Card
               key={course.id}
-              className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 pt-0"
             >
               <CardHeader className="p-0">
                 <div className="relative h-48 w-full">
@@ -48,17 +51,22 @@ const Courses = async () => {
                       ${course.price}
                     </Badge>
                   </div>
-                  {/* {isPurchased(course.id) && (
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-green-500 text-white">
-                        Purchased
-                      </Badge>
-                    </div>
-                  )} */}
                 </div>
               </CardHeader>
-              <CardContent className="p-6">
-                <CardTitle className="text-lg mb-2 line-clamp-2">
+              <CardContent className="">
+                <div className="flex gap-x-2 items-center">
+                  <Avatar className="size-11">
+                    <AvatarImage
+                      src="/user.jpg"
+                      width={100}
+                      height={100}
+                      className="size-12 rounded-full object-cover object-center"
+                    />
+                    <AvatarFallback>K</AvatarFallback>
+                  </Avatar>
+                  <p className="font-semibold text-gray-500">Habibur Rahman</p>
+                </div>
+                <CardTitle className="text-lg mb-2 line-clamp-2 capitalize">
                   {course.title}
                 </CardTitle>
                 <CardDescription className="line-clamp-3 mb-4">
@@ -67,16 +75,18 @@ const Courses = async () => {
 
                 <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
                   <div className="flex items-center space-x-1">
-                    <BookOpen className="w-4 h-4" />
-                    <span>{course.modules.length} modules</span>
+                    <Clock className="w-4 h-4" />
+                    <span>{minutesToHours(course.duration)}</span>
                   </div>
                   <div className="flex items-center space-x-1">
-                    <Clock className="w-4 h-4" />
-                    {/* <span>{getTotalLectures(course)} lectures</span> */}
+                    <Users2Icon className="w-4 h-4" />
+                    <span>
+                      {course?.availableSeat}/{course?.totalSeat} seats
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-1 mb-4">
+                <div className="flex items-center space-x-1 ">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
@@ -88,14 +98,14 @@ const Courses = async () => {
                   </span>
                 </div>
               </CardContent>
-              <CardFooter className="p-6 pt-0 space-y-2 flex gap-3">
+              <CardFooter className="pt-0 space-y-2 flex gap-3">
                 <Link href={`/courses/${course.slug}`} className="w-full">
                   <Button variant="outline" className="w-full bg-transparent">
                     View Details
                   </Button>
                 </Link>
 
-                <Link href={`/purchase/${course.id}`} className="w-full">
+                <Link href={`/courses/${course.slug}`} className="w-full">
                   <Button className="w-full">
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Buy Now

@@ -1,6 +1,3 @@
-"use client";
-
-// import { Navigation } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,10 +21,32 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { sampleCourses } from "@/lib/sample-course-data";
+import { getCourse } from "@/utils/getCourse";
+import { ICourse } from "@/types";
+import { minutesToHours } from "@/utils/munitesToHours";
 
-export default function CourseDetailPage() {
-  const course = sampleCourses[0];
+const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
+  const { course }: { course: ICourse } = await getCourse(slug);
+  const totalLectures = course?.modules?.reduce(
+    (sum, module) => sum + (module?.lectures?.length || 0),
+    0
+  );
+  if (!course) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 text-center px-4">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          Course Not Found
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          The course you are looking for does not exist or has been removed.
+        </p>
+        <Link href="/" passHref>
+          <Button size="lg">Go Back to Homepage</Button>
+        </Link>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* <Navigation type="user" /> */}
@@ -40,13 +59,13 @@ export default function CourseDetailPage() {
             <div>
               <div className="relative h-96 w-full mb-6 rounded-lg overflow-hidden">
                 <Image
-                  src="https://www.tekksolglobal.com/wp-content/uploads/2024/05/python-training-service-e1716919622893.png"
+                  src={course.coverPhoto}
                   alt={course.title}
                   fill
                   className="object-cover"
                 />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 capitalize">
                 {course.title}
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
@@ -70,15 +89,15 @@ export default function CourseDetailPage() {
               <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
                 <div className="flex items-center space-x-1">
                   <BookOpen className="w-4 h-4" />
-                  <span>{course.modules.length} modules</span>
+                  <span>{course?.modules?.length} modules</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock className="w-4 h-4" />
-                  <span>1 lectures</span>
+                  <span>{totalLectures || 0} lectures</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock className="w-4 h-4" />
-                  <span>5hours</span>
+                  <span>{minutesToHours(course?.duration)}</span>
                 </div>
               </div>
             </div>
@@ -88,34 +107,37 @@ export default function CourseDetailPage() {
               <CardHeader>
                 <CardTitle>Course Content</CardTitle>
                 <CardDescription>
-                  {course.modules.length} modules • 5 lectures • 2 min total
-                  length
+                  {course?.modules?.length || 0} modules • {totalLectures || 0}
+                  lectures • {minutesToHours(course.duration)} total length
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {course.modules.map((module, index) => (
-                  <div key={module.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900 dark:text-white">
-                        Module {module.moduleNumber}: {module.title}
-                      </h3>
-                      <Badge variant="secondary">
-                        {module.lectures.length} lectures
-                      </Badge>
+                {course?.modules &&
+                  course?.modules?.length > 0 &&
+                  course?.modules?.map((module, index) => (
+                    <div key={module?.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                          Module {module?.moduleNumber}: {module?.title}
+                        </h3>
+                        <Badge variant="secondary">
+                          {module?.lectures?.length || 0} lectures
+                        </Badge>
+                      </div>
+                      <div className="space-y-2">
+                        {module?.lectures?.length > 0 &&
+                          module.lectures.map((lecture, index) => (
+                            <div
+                              key={lecture.id || index}
+                              className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300"
+                            >
+                              <Play className="w-4 h-4" />
+                              <span>{lecture.title}</span>
+                            </div>
+                          ))}
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      {module.lectures.map((lecture) => (
-                        <div
-                          key={lecture.id}
-                          className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300"
-                        >
-                          <Play className="w-4 h-4" />
-                          <span>{lecture.title}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </CardContent>
             </Card>
 
@@ -227,7 +249,7 @@ export default function CourseDetailPage() {
                 {/* Course Thumbnail */}
                 <div className="relative w-full h-40 mb-6">
                   <Image
-                    src="https://img-c.udemycdn.com/course/750x422/2314160_8d61_6.jpg"
+                    src={course?.thumbnail}
                     alt={course.title}
                     fill
                     className="object-cover rounded-lg"
@@ -237,7 +259,7 @@ export default function CourseDetailPage() {
                 {/* Price */}
                 <div className="text-center mb-6">
                   <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-                    {course.price}
+                    ${course?.discountedPrice || course.price}
                   </div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     One-time payment
@@ -245,7 +267,7 @@ export default function CourseDetailPage() {
                 </div>
 
                 {/* CTA Button */}
-                <Link href={`/courses/${course.id}/purchase`}>
+                <Link href={`/courses/${course.slug}/checkout`}>
                   <Button size="lg" className="w-full mb-4">
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Enroll on course
@@ -269,7 +291,7 @@ export default function CourseDetailPage() {
                   <div className="space-y-3">
                     {[
                       `5 on-demand video lectures`,
-                      `${course.modules.length} comprehensive modules`,
+                      `${course?.modules?.length} comprehensive modules`,
                       "Downloadable resources and PDFs",
                       "Full lifetime access",
                       "Access on mobile and desktop",
@@ -294,4 +316,5 @@ export default function CourseDetailPage() {
       </div>
     </div>
   );
-}
+};
+export default page;

@@ -13,7 +13,15 @@ export const orderApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.ORDERS],
     }),
+    placeOrder: build.mutation({
+      query: (data) => ({
+        url: `${ENDPOINT}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.ORDERS],
+    }),
   }),
 });
 
-export const { useGetAllOrdersQuery } = orderApi;
+export const { useGetAllOrdersQuery, usePlaceOrderMutation } = orderApi;
