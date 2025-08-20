@@ -37,6 +37,7 @@ export interface ILecture {
 }
 
 export interface ICourse {
+  _id: string;
   id: string;
   title: string;
   slug: string;

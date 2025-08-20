@@ -22,7 +22,15 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.COURSE],
     }),
+    getCourse: build.query({
+      query: (slugOrdId: string) => ({
+        url: `${ENDPOINT}/${slugOrdId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.COURSE],
+    }),
   }),
 });
 
-export const { useAddCourseMutation, useGetAllCourseQuery } = courseApi;
+export const { useAddCourseMutation, useGetAllCourseQuery, useGetCourseQuery } =
+  courseApi;
