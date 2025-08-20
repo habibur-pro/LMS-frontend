@@ -17,7 +17,7 @@ const page = () => {
               instructors.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/register">
+              <Link href="/register">
                 <Button size="lg" className="text-lg px-8 py-6">
                   Start Learning Today
                 </Button>

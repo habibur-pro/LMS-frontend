@@ -54,7 +54,7 @@ const RegisterPage = () => {
       await signIn("credentials", {
         email: data.email,
         password: data.password,
-        callbackUrl: "/dashboard", // 👈 redirect URL
+        callbackUrl: "/my-class", // 👈 redirect URL
         redirect: true,
       });
     } catch (error: any) {

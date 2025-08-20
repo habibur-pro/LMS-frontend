@@ -19,7 +19,7 @@ const page = () => {
             confirmation email with your order details.
           </p>
           <div className="flex gap-4 justify-center">
-            <Link href="/dashboard">
+            <Link href="/my-class">
               <Button variant="default">Go to Courses</Button>
             </Link>
             <Link href="/">

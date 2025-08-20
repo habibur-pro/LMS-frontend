@@ -21,13 +21,13 @@ export async function middleware(req: NextRequest) {
 
   if (path === "/login" || path === "/register") {
     if (token) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
   }
 
   // Dashboard: login required
-  if (path === "/dashboard" || path.startsWith("/dashboard/")) {
+  if (path === "/my-class" || path.startsWith("/my-class/")) {
     if (!token) return NextResponse.redirect(new URL("/login", req.url));
     return NextResponse.next();
   }
@@ -48,7 +48,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-
   // Any other route: redirect to login
   if (!token) return NextResponse.redirect(new URL("/login", req.url));
 
@@ -64,6 +63,7 @@ export const config = {
     "/admin/:path*",
     "/login",
     "/register",
+    "/my-class/:path*",
     "/courses/:path*",
   ],
 };

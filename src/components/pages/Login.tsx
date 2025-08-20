@@ -53,7 +53,7 @@ const Login = () => {
       await signIn("credentials", {
         email: data.email,
         password: data.password,
-        callbackUrl: role === UserRole.Admin ? "/admin" : "/dashboard",
+        callbackUrl: role === UserRole.Admin ? "/admin" : "/my-class",
         redirect: true,
       });
     } catch (error: any) {
