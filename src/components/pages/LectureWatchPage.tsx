@@ -19,7 +19,7 @@ import {
   useNextLectureMutation,
   usePreviousLectureMutation,
 } from "@/redux/api/myClassApi";
-import { IMyClassWithProgress, IModule, ILecture } from "@/types";
+import { IMyClass, IModule, ILecture } from "@/types";
 import { toast } from "sonner";
 
 const LectureWatchPage = () => {
@@ -29,31 +29,43 @@ const LectureWatchPage = () => {
   const { data: myClassRes, isLoading } = useGetSingleClassQuery(classId, {
     skip: !classId,
   });
+
   const [nextLectureMutation] = useNextLectureMutation();
   const [prevLectureMutation] = usePreviousLectureMutation();
 
-  const myClass: IMyClassWithProgress | undefined = myClassRes?.data;
+  const myClass: IMyClass | undefined = myClassRes?.data;
 
   const [currentModule, setCurrentModule] = useState<IModule | null>(null);
+  const [currentModuleId, setCurrentModuleId] = useState<string | null>(null);
   const [currentLecture, setCurrentLecture] = useState<ILecture | null>(null);
 
   // Set default lecture when data loads
   useEffect(() => {
-    if (myClass?.course?.modules?.length) {
-      const firstUnlockedModule = myClass.course.modules.find((mod) =>
-        mod.lectures.some((lec) => lec.isUnlocked)
-      );
-      if (firstUnlockedModule) {
-        setCurrentModule(firstUnlockedModule);
-        const firstUnlockedLecture = firstUnlockedModule.lectures.find(
-          (lec) => lec.isUnlocked
-        );
-        setCurrentLecture(
-          firstUnlockedLecture || firstUnlockedModule.lectures[0]
-        );
-      }
+    // if (myClass?.course?.modules?.length) {
+    //   const firstUnlockedModule = myClass.course.modules.find((mod) =>
+    //     mod.lectures.some((lec) => lec.isUnlocked)
+    //   );
+    //   if (firstUnlockedModule) {
+    //     setCurrentModule(firstUnlockedModule);
+    //     const firstUnlockedLecture = firstUnlockedModule.lectures.find(
+    //       (lec) => lec.isUnlocked
+    //     );
+    //     setCurrentLecture(
+    //       firstUnlockedLecture || firstUnlockedModule.lectures[0]
+    //     );
+    //   }
+    // }
+
+    if (myClass?.currentLecture) {
+      setCurrentLecture(myClass.currentLecture);
+    }
+
+    if (myClass?.currentModuleId) {
+      setCurrentModuleId(myClass.currentModuleId);
     }
   }, [myClass]);
+
+  console.log({ currentModuleId });
 
   const handleNextLecture = async () => {
     if (!classId) return;
@@ -74,11 +86,7 @@ const LectureWatchPage = () => {
   const handlePrevLecture = async () => {
     if (!classId) return;
     try {
-      const res = await prevLectureMutation(classId).unwrap();
-      if (res?.data?.currentLecture) {
-        setCurrentModule(res.data.currentModule);
-        setCurrentLecture(res.data.currentLecture);
-      }
+      await prevLectureMutation(classId).unwrap();
     } catch (err: any) {
       console.log("Previous lecture error:", err);
       toast.error(
@@ -95,15 +103,59 @@ const LectureWatchPage = () => {
       {/* Video Player */}
       <div className="flex-1 w-full">
         {currentLecture && (
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <ReactPlayer
-              src={currentLecture.content}
-              width="100%"
-              height="100%"
-              className="absolute top-0 left-0"
-              controls
-            />
-          </div>
+          <>
+            <h2 className="text-xl font-semibold mb-4 text-foreground">
+              {currentLecture.title}
+            </h2>
+
+            <div
+              className="relative w-full shadow-lg"
+              style={{ paddingTop: "56.25%" }}
+            >
+              {/* Video */}
+              {currentLecture.contentType === "video" && (
+                <ReactPlayer
+                  src={currentLecture.content}
+                  width="100%"
+                  height="100%"
+                  className="absolute top-0 left-0"
+                  controls
+                />
+              )}
+
+              {/* Text */}
+              {currentLecture.contentType === "text" && (
+                <div className="absolute top-0 left-0 w-full h-full overflow-y-auto p-6">
+                  <p className="text-base leading-relaxed whitespace-pre-line">
+                    {currentLecture.content}
+                  </p>
+                </div>
+              )}
+
+              {/* PDF */}
+              {currentLecture.contentType === "pdf" && (
+                <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center p-6">
+                  <p className="mb-4 text-lg font-medium">PDF Document</p>
+                  <a
+                    href={currentLecture.content}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline"
+                  >
+                    View PDF
+                  </a>
+                  <a
+                    href={currentLecture.content}
+                    target="_blank"
+                    download
+                    className="mt-3 inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80"
+                  >
+                    Download PDF
+                  </a>
+                </div>
+              )}
+            </div>
+          </>
         )}
         <div className="flex justify-end pt-3 gap-x-3">
           <Button size="lg" variant="secondary" onClick={handlePrevLecture}>
@@ -124,7 +176,7 @@ const LectureWatchPage = () => {
       <div className="flex-1 w-full lg:max-w-md">
         <Card className="py-5 mb-5 w-full lg:w-[97%]">
           <CardContent>
-            <Progress value={myClass.progress} className="h-3" />
+            <Progress value={myClass.overallProgress} className="h-3" />
             <div className="relative mt-5">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
@@ -143,7 +195,14 @@ const LectureWatchPage = () => {
               key={module.id}
               className="transition-all duration-200 hover:shadow-lg border border-border py-0"
             >
-              <Collapsible defaultOpen={currentModule?.id === module.id}>
+              <Collapsible
+                onOpenChange={() =>
+                  setCurrentModuleId(
+                    currentModuleId === module._id ? null : module._id
+                  )
+                }
+                open={module._id == currentModuleId}
+              >
                 <CollapsibleTrigger asChild>
                   <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors duration-200 p-6">
                     <div className="flex items-center justify-between">
@@ -166,40 +225,45 @@ const LectureWatchPage = () => {
                     <div className="space-y-3">
                       {module.lectures.map((lecture, index) => {
                         const isActive = currentLecture?._id === lecture._id;
+                        console.log({ isActive });
                         return (
                           <div
                             key={lecture._id}
-                            onClick={() =>
-                              lecture.isUnlocked && setCurrentLecture(lecture)
-                            }
+                            onClick={() => {
+                              if (!lecture.isLocked) {
+                                setCurrentLecture(lecture);
+                              }
+                            }}
                             className={`group flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 ${
                               isActive
                                 ? "bg-primary/10 border-primary"
-                                : lecture.isUnlocked
+                                : !lecture.isLocked
                                 ? "hover:bg-muted/30 hover:border-border cursor-pointer"
                                 : "bg-muted/20 border-border cursor-not-allowed"
                             }`}
                           >
+                            {/* Icon */}
                             <div
                               className={`flex-shrink-0 ${
-                                lecture.isUnlocked
+                                !lecture.isLocked
                                   ? "text-primary"
                                   : "text-muted-foreground"
                               }`}
                             >
-                              {lecture.isUnlocked ? (
+                              {!lecture.isLocked ? (
                                 <Play className="w-5 h-5" />
                               ) : (
                                 <Lock className="w-5 h-5" />
                               )}
                             </div>
 
+                            {/* Title */}
                             <div className="flex-1 min-w-0">
                               <h4
                                 className={`text-base font-medium truncate ${
                                   isActive
                                     ? "text-primary font-semibold"
-                                    : lecture.isUnlocked
+                                    : !lecture.isLocked
                                     ? "text-foreground group-hover:text-primary"
                                     : "text-muted-foreground"
                                 }`}
