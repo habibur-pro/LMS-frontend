@@ -224,6 +224,9 @@ function LecturesField({
                           <SelectItem value={LectureContentType.Text}>
                             Text
                           </SelectItem>
+                          <SelectItem value={LectureContentType.Pdf}>
+                            Pdf
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>

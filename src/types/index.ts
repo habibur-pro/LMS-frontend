@@ -119,42 +119,40 @@ export interface ILecture {
   resources?: string[];
   quizzes?: any[]; // or define a Quiz type
   isCompleted: boolean;
-  isUnlocked: boolean;
+  isLocked: boolean;
 }
 
 // Module interface
 export interface IModule {
+  _id: string;
   id: string;
   title: string;
   isCompleted: boolean;
   lectures: ILecture[];
 }
 
-// Completed lecture record
-export interface ILecturesWatched {
-  lecture: string; // Lecture ID
+export interface IWatchedLecture {
+  lecture: ILecture; // FK → Lecture.id
   watchedAt: Date;
 }
 
-// Completed module record
-export interface ICompletedModule {
-  module: string; // Module ID
-  lecturesWatched: ILecturesWatched[];
+export interface ICompletedModules {
+  module: IModule; // FK → Module.id
+  lectures: IWatchedLecture[];
   isCompleted: boolean;
-  completedAt: Date | null;
+  completedAt?: Date;
 }
 
-// MyClass response type
-export interface IMyClassWithProgress {
+export interface IMyClass {
   id: string;
-  user: string; // User ID
-  course: {
-    id: string;
-    title: string;
-    modules: IModule[];
-  };
-  completedModules: ICompletedModule[];
-  progress: number; // overall % progress
-  currentLecture: ILecture | null;
-  nextLecture: ILecture | null;
+  user: IUser; // FK → User.id
+  course: ICourse; // FK → Course.id
+  modules: ICompletedModules[];
+  overallProgress: number; // %
+  isCompleted: boolean;
+  currentLecture: ILecture;
+  currentModuleId: string; //it's an objectid string;
+  completedAt?: Date;
+  createdAt?: Date; // from { timestamps: true }
+  updatedAt?: Date; // from { timestamps: true }
 }
