@@ -4,9 +4,12 @@ import { boolean, z } from "zod";
 const lectureSchema = z.object({
   title: z.string().min(1, "Lecture title is required"),
   content: z.string().min(1, "Content is required"),
-  contentType: z.enum([LectureContentType.Video, LectureContentType.Text], {
-    message: "Content type is required",
-  }),
+  contentType: z.enum(
+    [LectureContentType.Video, LectureContentType.Text, LectureContentType.Pdf],
+    {
+      message: "Content type is required",
+    }
+  ),
 });
 
 const moduleSchema = z.object({
