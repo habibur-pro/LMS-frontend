@@ -44,8 +44,10 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <BookOpen className="h-6 w-6 " />
-              <span className="text-xl font-bold">Minimal LMS</span>
+              <BookOpen className="h-6 w-6 text-purple-600" />
+              <span className=" text-xl font-bold bg-gradient-to-r from-purple-600  to-indigo-900 inline-block text-transparent bg-clip-text">
+                Minimal LMS
+              </span>
             </Link>
           </div>
 

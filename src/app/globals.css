@@ -9,8 +9,8 @@
   --card-foreground: oklch(0.15 0.02 270);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.02 270);
-  --primary: oklch(0.6 0.25 270);
-  --primary-foreground: oklch(0.98 0.01 270);
+  --primary: oklch(56.48% 0.228 293.53);
+  --primary-foreground: oklch(98% 0.01 270);
   --secondary: oklch(0.95 0.02 270);
   --secondary-foreground: oklch(0.25 0.02 270);
   --muted: oklch(0.95 0.02 270);
@@ -46,8 +46,8 @@
   --card-foreground: oklch(0.95 0.01 270);
   --popover: oklch(0.12 0.02 270);
   --popover-foreground: oklch(0.95 0.01 270);
-  --primary: oklch(0.7 0.25 270);
-  --primary-foreground: oklch(0.08 0.02 270);
+  --primary: oklch(56.48% 0.228 293.53);
+  --primary-foreground: oklch(98% 0.01 270);
   --secondary: oklch(0.18 0.02 270);
   --secondary-foreground: oklch(0.95 0.01 270);
   --muted: oklch(0.18 0.02 270);
@@ -123,21 +123,6 @@
   }
 }
 
-/* Custom gradient classes for the purple theme */
-.gradient-text {
-  background: linear-gradient(135deg, #8b5cf6, #a855f7, #c084fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-text-vibrant {
-  background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .gradient-button {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
   transition: all 0.3s ease;
@@ -147,53 +132,4 @@
   background: linear-gradient(135deg, #4f46e5, #7c3aed);
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
-}
-
-.gradient-bg {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.gradient-bg-light {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.gradient-bg-hero {
-  background: linear-gradient(
-    135deg,
-    #1e1b4b 0%,
-    #312e81 25%,
-    #4c1d95 50%,
-    #581c87 75%,
-    #6b21a8 100%
-  );
-}
-
-.gradient-bg-card {
-  background: linear-gradient(
-    135deg,
-    rgba(139, 92, 246, 0.1) 0%,
-    rgba(168, 85, 247, 0.05) 100%
-  );
-}
-
-.purple-gradient {
-  background: linear-gradient(135deg, #8b5cf6, #6366f1);
-}
-
-.purple-gradient-soft {
-  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
-}
-
-/* Animation classes for enhanced interactivity */
-.hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.15);
-}
-
-.glow-purple {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
 }
