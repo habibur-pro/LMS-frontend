@@ -13,7 +13,7 @@ const MyCourses = () => {
   const { data: myClassRes } = useGetMyClassesQuery("");
   const myClasses: Array<IMyClass> = myClassRes?.data;
   return (
-    <div className="container mx-auto px-4 py-8   flex  justify-center">
+    <div className="container mx-auto px-4 py-8   flex  justify-center min-h-[90vh]">
       <div className="max-w-full xl:max-w-7xl w-full ">
         {/* My Courses */}
         <div className="">
@@ -65,7 +65,7 @@ const MyCourses = () => {
                               {myClass?.course?.title}
                             </h3>
                             <Badge variant="secondary">
-                              {myClass?.overallProgress}% Complete
+                              {Math.round(myClass?.overallProgress)}% Complete
                             </Badge>
                           </div>
                           <p className="text-sm text-muted-foreground mb-3">

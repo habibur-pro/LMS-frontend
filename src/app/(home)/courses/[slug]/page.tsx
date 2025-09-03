@@ -9,7 +9,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
-  ArrowLeft,
   Play,
   Clock,
   BookOpen,
@@ -24,6 +23,7 @@ import Link from "next/link";
 import { getCourse } from "@/utils/getCourse";
 import { ICourse } from "@/types";
 import { minutesToHours } from "@/utils/munitesToHours";
+import EnrollButton from "@/components/EnrollButton";
 
 const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
@@ -34,11 +34,9 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   );
   if (!course) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 text-center px-4">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          Course Not Found
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+      <div className="min-h-screen flex flex-col items-center justify-center  text-center px-4">
+        <h1 className="text-4xl font-bold  mb-4">Course Not Found</h1>
+        <p className="">
           The course you are looking for does not exist or has been removed.
         </p>
         <Link href="/" passHref>
@@ -48,7 +46,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     );
   }
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen ">
       {/* <Navigation type="user" /> */}
 
       <div className="container mx-auto px-4 py-8">
@@ -65,12 +63,10 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                   className="object-cover"
                 />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 capitalize">
+              <h1 className="text-3xl font-bold mb-4 capitalize">
                 {course.title}
               </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-                {course.description}
-              </p>
+              <p className="text-lg  mb-6">{course.description}</p>
 
               <div className="flex items-center space-x-6 mb-6">
                 <div className="flex items-center space-x-1">
@@ -80,13 +76,11 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                       className="w-5 h-5 fill-yellow-400 text-yellow-400"
                     />
                   ))}
-                  <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                    (4.8 • 1,234 reviews)
-                  </span>
+                  <span className="text-sm  ml-2">(4.8 • 1,234 reviews)</span>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex items-center space-x-6 text-sm">
                 <div className="flex items-center space-x-1">
                   <BookOpen className="w-4 h-4" />
                   <span>{course?.modules?.length} modules</span>
@@ -117,7 +111,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                   course?.modules?.map((module, index) => (
                     <div key={module?.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold ">
                           Module {module?.moduleNumber}: {module?.title}
                         </h3>
                         <Badge variant="secondary">
@@ -129,7 +123,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                           module.lectures.map((lecture, index) => (
                             <div
                               key={lecture.id || index}
-                              className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300"
+                              className="flex items-center space-x-2 text-sm "
                             >
                               <Play className="w-4 h-4" />
                               <span>{lecture.title}</span>
@@ -155,13 +149,9 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                     JS
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      John Smith
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                      Senior Software Engineer
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h3 className="font-semibold  mb-1">John Smith</h3>
+                    <p className="text-sm  mb-2">Senior Software Engineer</p>
+                    <p className="text-sm ">
                       John has over 10 years of experience in web development
                       and has taught thousands of students through his
                       comprehensive courses. He specializes in modern JavaScript
@@ -213,13 +203,9 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                             .map((n) => n[0])
                             .join("")}
                         </div>
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {review.name}
-                        </span>
+                        <span className="font-medium ">{review.name}</span>
                       </div>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {review.date}
-                      </span>
+                      <span className="text-sm ">{review.date}</span>
                     </div>
                     <div className="flex items-center space-x-1 mb-2">
                       {[...Array(5)].map((_, i) => (
@@ -233,9 +219,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                         />
                       ))}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {review.comment}
-                    </p>
+                    <p className="text-sm ">{review.comment}</p>
                   </div>
                 ))}
               </CardContent>
@@ -261,33 +245,22 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                   <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                     ${course?.discountedPrice || course.price}
                   </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    One-time payment
-                  </p>
+                  <p className="text-sm ">One-time payment</p>
                 </div>
 
                 {/* CTA Button */}
-                <Link href={`/courses/${course.slug}/checkout`}>
-                  <Button size="lg" className="w-full mb-4">
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Enroll on course
-                  </Button>
-                </Link>
+                <EnrollButton slug={slug} />
 
                 {/* Guarantee */}
                 <div className="text-center mb-6">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    30-day money-back guarantee
-                  </p>
+                  <p className="text-sm ">30-day money-back guarantee</p>
                 </div>
 
                 <Separator className="my-6" />
 
                 {/* Features */}
                 <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    This course includes:
-                  </h3>
+                  <h3 className="font-semibold ">This course includes:</h3>
                   <div className="space-y-3">
                     {[
                       `5 on-demand video lectures`,
@@ -302,9 +275,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                         className="flex items-center space-x-2 text-sm"
                       >
                         <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-gray-600 dark:text-gray-300">
-                          {feature}
-                        </span>
+                        <span className="">{feature}</span>
                       </div>
                     ))}
                   </div>
