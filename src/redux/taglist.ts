@@ -4,6 +4,8 @@ export enum tagTypes {
   USERS = "user",
   ORDERS = "orders",
   MYCLASS = "myclass",
+  LECTURE = "lectures",
+  MODULE = "modules",
 }
 
 // Automatically derive the list from the enum

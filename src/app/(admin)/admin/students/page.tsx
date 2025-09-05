@@ -65,7 +65,7 @@ const Students = () => {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+              <thead className="bg-gray-50 0">
                 <tr>
                   {[
                     "No",
@@ -78,7 +78,7 @@ const Students = () => {
                   ].map((header) => (
                     <th
                       key={header}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     >
                       {header}
                     </th>
@@ -86,12 +86,9 @@ const Students = () => {
                 </tr>
               </thead>
 
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white  divide-y divide-gray-200 ">
                 {filteredData?.map((student, index) => (
-                  <tr
-                    key={student.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
+                  <tr key={student.id} className="hover:bg-gray-50 ">
                     {/* Course */}
                     <td className="px-6 py-4 flex items-center space-x-3">
                       {index + 1}
@@ -101,7 +98,7 @@ const Students = () => {
                     <td className="px-6 py-4">{student?.name || "-"}</td>
                     <td className="px-6 py-4">{student?.email || "-"}</td>
                     <td className="px-6 py-4">{student?.phone || "-"}</td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 text-sm ">
                       {moment(student.createdAt).format("DD-MM-YYYY")}
                     </td>
 

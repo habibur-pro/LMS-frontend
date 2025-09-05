@@ -67,7 +67,7 @@ const Orders = () => {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+              <thead className="bg-gray-50 ">
                 <tr>
                   {[
                     "Course",
@@ -82,7 +82,7 @@ const Orders = () => {
                   ].map((header) => (
                     <th
                       key={header}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-700  uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     >
                       {header}
                     </th>
@@ -90,12 +90,9 @@ const Orders = () => {
                 </tr>
               </thead>
 
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white  divide-y divide-gray-200 ">
                 {filteredData?.map((order, index) => (
-                  <tr
-                    key={order.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
+                  <tr key={order.id} className="hover:bg-gray-50 ">
                     {/* Course */}
                     <td className="px-6 py-4 flex items-center space-x-3">
                       <Image
@@ -106,7 +103,7 @@ const Orders = () => {
                         className="w-12 h-12 rounded-lg object-cover"
                       />
                       <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <div className="text-sm font-medium ">
                           {order?.course?.title}
                         </div>
                       </div>
@@ -120,7 +117,7 @@ const Orders = () => {
                     <td className="px-6 py-4">
                       {order?.payment?.status || "-"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 text-sm ">
                       {moment(order.createdAt).format("DD-MM-YYYY")}
                     </td>
 
