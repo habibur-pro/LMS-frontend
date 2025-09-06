@@ -20,6 +20,7 @@ export interface Course {
   thumbnail: string;
   description: string;
   modules: Module[];
+  instructor: { name: string; photo: string; bio: string };
 }
 
 export interface CourseProgress {

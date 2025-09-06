@@ -4,18 +4,21 @@ import { boolean, z } from "zod";
 const lectureSchema = z.object({
   title: z.string().min(1, "Lecture title is required"),
   content: z.string().min(1, "Content is required"),
+  notes: z.array(z.string()).optional(), // for PDF links
   contentType: z.enum(
     [LectureContentType.Video, LectureContentType.Text, LectureContentType.Pdf],
     {
       message: "Content type is required",
     }
   ),
+  lectureNumber: z.number(),
 });
 
 const moduleSchema = z.object({
   title: z.string().min(1, "Module title is required"),
   lectures: z.array(lectureSchema).min(1, "At least one lecture is required"),
   isFree: boolean(),
+  moduleNumber: z.number(),
 });
 
 export const CourseFormSchema = z
@@ -57,3 +60,18 @@ export const CourseFormSchema = z
   });
 
 export type CourseFormValues = z.infer<typeof CourseFormSchema>;
+
+export const courseUpdateSchema = z.object({
+  title: z.string().min(2),
+  price: z.number().min(0),
+  discountedPrice: z.number().min(0),
+  description: z.string().min(5),
+  thumbnail: z.any().optional(), // file input
+  coverPhoto: z.any().optional(), // file input
+  duration: z.number().min(1),
+  totalSeat: z.number().min(1),
+  tags: z.string().optional(),
+  learningPoints: z.string().optional(),
+  requirements: z.string().optional(),
+  status: z.enum(["published", "draft"]),
+});

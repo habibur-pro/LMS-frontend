@@ -115,8 +115,10 @@ export interface ILecture {
   title: string;
   duration: number;
   contentType: LectureContentType; // e.g., 'video', 'pdf'
+  lectureNumber: number;
   content: string; // URL or text
   resources?: string[];
+  notes: Array<string>;
   quizzes?: any[]; // or define a Quiz type
   isCompleted: boolean;
   isLocked: boolean;

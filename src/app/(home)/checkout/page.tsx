@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,14 +35,25 @@ import { ICourse } from "@/types";
 import { toast } from "sonner";
 
 export default function PurchasePage() {
-  const params = useParams();
+  const searchParams = useSearchParams();
+  const [slug, setSlug] = useState<string | null>(null);
+  const courseSlug = searchParams.get("course");
+  useEffect(() => {
+    if (searchParams.get("course")) {
+      setSlug(searchParams.get("course"));
+    } else {
+      setSlug(localStorage.getItem("selectedItem"));
+    }
+  }, [searchParams]);
+  console.log("course slug", courseSlug);
   const router = useRouter();
   const session = useSession();
   const user = session.data?.user;
   // console.log("user", user);
   const [placeOrder, { isLoading: orderLoading }] = usePlaceOrderMutation();
-  const slug = params.slug as string;
-  const { data: courseRes, isLoading } = useGetCourseQuery(slug);
+  const { data: courseRes, isLoading } = useGetCourseQuery(slug as string, {
+    skip: !slug,
+  });
   const course: ICourse = courseRes?.data;
   const handlePlaceOrder = async () => {
     try {

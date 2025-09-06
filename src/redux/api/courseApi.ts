@@ -29,8 +29,31 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.COURSE],
     }),
+    // update course
+    updateCourse: build.mutation({
+      query: (data: { id: string; data: any }) => ({
+        url: `${ENDPOINT}/${data.id}`,
+        method: "PATCH",
+        body: data.data,
+      }),
+      invalidatesTags: [tagTypes.COURSE],
+    }),
+    // add module
+    addModule: build.mutation({
+      query: (data: { courseId: string; data: any }) => ({
+        url: `${ENDPOINT}/${data.courseId}/modules`,
+        method: "POST",
+        body: data.data,
+      }),
+      invalidatesTags: [tagTypes.COURSE],
+    }),
   }),
 });
 
-export const { useAddCourseMutation, useGetAllCourseQuery, useGetCourseQuery } =
-  courseApi;
+export const {
+  useAddCourseMutation,
+  useGetAllCourseQuery,
+  useGetCourseQuery,
+  useUpdateCourseMutation,
+  useAddModuleMutation
+} = courseApi;

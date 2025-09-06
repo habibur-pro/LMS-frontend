@@ -13,7 +13,15 @@ import {
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Search, ChevronDown, Clock, Lock, Play, FileText } from "lucide-react";
+import {
+  Search,
+  ChevronDown,
+  Lock,
+  Play,
+  FileText,
+  Text,
+  Type,
+} from "lucide-react";
 import {
   useGetSingleClassQuery,
   useNextLectureMutation,
@@ -21,6 +29,7 @@ import {
 } from "@/redux/api/myClassApi";
 import { IMyClass, IModule, ILecture } from "@/types";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const LectureWatchPage = () => {
   const params = useParams();
@@ -135,7 +144,7 @@ const LectureWatchPage = () => {
               {/* PDF */}
               {currentLecture.contentType === "pdf" && (
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center p-6">
-                  <p className="mb-4 text-lg font-medium">PDF Document</p>
+                  {/* <p className="mb-4 text-lg font-medium">PDF Document</p>
                   <a
                     href={currentLecture.content}
                     target="_blank"
@@ -151,7 +160,27 @@ const LectureWatchPage = () => {
                     className="mt-3 inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80"
                   >
                     Download PDF
-                  </a>
+                  </a> */}
+
+                  {currentLecture?.notes?.length > 0 &&
+                    currentLecture?.notes?.map((item, index) => (
+                      <div
+                        key={item + index}
+                        className="flex flex-col justify-center items-center"
+                      >
+                        <Link className="block text-blue-400" href={item}>
+                          {item}
+                        </Link>
+                        <a
+                          href={item}
+                          target="_blank"
+                          download
+                          className="mt-3 inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 w-fit"
+                        >
+                          Download PDF
+                        </a>
+                      </div>
+                    ))}
                 </div>
               )}
             </div>
@@ -176,7 +205,15 @@ const LectureWatchPage = () => {
       <div className="flex-1 w-full lg:max-w-md">
         <Card className="py-5 mb-5 w-full lg:w-[97%]">
           <CardContent>
-            <Progress value={myClass.overallProgress} className="h-3" />
+            <span className=" flex justify-end mb-2">
+              {Math.round(myClass.overallProgress)}%
+            </span>
+            <div>
+              <Progress
+                value={Math.round(myClass.overallProgress)}
+                className="h-3"
+              />
+            </div>
             <div className="relative mt-5">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
@@ -243,19 +280,19 @@ const LectureWatchPage = () => {
                             }`}
                           >
                             {/* Icon */}
-                            <div
-                              className={`flex-shrink-0 ${
-                                !lecture.isLocked
-                                  ? "text-primary"
-                                  : "text-muted-foreground"
-                              }`}
-                            >
-                              {!lecture.isLocked ? (
+                            {!lecture.isLocked ? (
+                              lecture.contentType === "text" ? (
+                                <Type className="w-5 h-5" />
+                              ) : lecture.contentType === "pdf" ? (
+                                <FileText className="w-5 h-5" />
+                              ) : lecture.contentType === "video" ? (
                                 <Play className="w-5 h-5" />
                               ) : (
-                                <Lock className="w-5 h-5" />
-                              )}
-                            </div>
+                                <FileText className="w-5 h-5" /> // default icon
+                              )
+                            ) : (
+                              <Lock className="w-5 h-5" />
+                            )}
 
                             {/* Title */}
                             <div className="flex-1 min-w-0">

@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +18,7 @@ import {
   MessageSquare,
   CheckCircle,
   ShoppingCart,
+  Loader,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,27 +26,28 @@ import { getCourse } from "@/utils/getCourse";
 import { ICourse } from "@/types";
 import { minutesToHours } from "@/utils/munitesToHours";
 import EnrollButton from "@/components/EnrollButton";
+import { useParams } from "next/navigation";
+import { useGetCourseQuery } from "@/redux/api/courseApi";
 
-const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params;
-  const { course }: { course: ICourse } = await getCourse(slug);
+const Preview = () => {
+  const params = useParams();
+  const slug = params.slug as string;
+  const { data: courseRes, isLoading } = useGetCourseQuery(slug, {
+    skip: !slug,
+  });
+  const course: ICourse = courseRes?.data;
   const totalLectures = course?.modules?.reduce(
     (sum, module) => sum + (module?.lectures?.length || 0),
     0
   );
-  if (!course) {
+  if (isLoading || !course) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center  text-center px-4">
-        <h1 className="text-4xl font-bold  mb-4">Course Not Found</h1>
-        <p className="">
-          The course you are looking for does not exist or has been removed.
-        </p>
-        <Link href="/" passHref>
-          <Button size="lg">Go Back to Homepage</Button>
-        </Link>
+      <div className="h-screen flex items-center justify-center">
+        <Loader className="w-5 h-5 animate-spin" />
       </div>
     );
   }
+
   return (
     <div className="min-h-screen ">
       {/* <Navigation type="user" /> */}
@@ -228,7 +231,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            <Card className="sticky top-8">
+            <Card className="sticky top-8 ">
               <CardContent className="p-6">
                 {/* Course Thumbnail */}
                 <div className="relative w-full h-40 mb-6">
@@ -249,7 +252,10 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 </div>
 
                 {/* CTA Button */}
-                <EnrollButton slug={slug} />
+                <Button size="lg" className="w-full mb-4">
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  Enroll on course
+                </Button>
 
                 {/* Guarantee */}
                 <div className="text-center mb-6">
@@ -288,4 +294,4 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
     </div>
   );
 };
-export default page;
+export default Preview;

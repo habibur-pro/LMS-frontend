@@ -19,6 +19,7 @@ export const authOption: NextAuthOptions = {
           const res = await fetch(`${process.env.API_BASE_URL}/auth/signin`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include", // ✅ must be "include"
             body: JSON.stringify({
               email: credentials?.email,
               password: credentials?.password,
@@ -53,7 +54,6 @@ export const authOption: NextAuthOptions = {
         token.isEmailVerified = user.isEmailVerified;
         token.name = user.name;
         token.email = user.email;
-        token.refreshToken = user.refreshToken;
         token.accessToken = user.accessToken as string;
         token.accessTokenExpires = user.accessTokenExpiresAt;
         token.role = user.role;
@@ -61,10 +61,12 @@ export const authOption: NextAuthOptions = {
       if (trigger === "update" && session) {
         return { ...token, ...session };
       }
-      if (token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
-        return token;
-      }
-      return await refreshAccessToken(token);
+      // If token is still valid
+      if (Date.now() < (token.accessTokenExpires ?? 0)) return token;
+
+      // Token expired → try refresh
+      const refreshedToken = await refreshAccessToken(token);
+      return refreshedToken;
     },
     async session({ session, token }) {
       if (session) {
@@ -72,7 +74,6 @@ export const authOption: NextAuthOptions = {
         session.user.isEmailVerified = token.isEmailVerified as boolean;
         session.user.email = token.email;
         session.user.name = token.name;
-        session.user.refreshToken = token.refreshToken as string;
         session.user.accessToken = token.accessToken as string;
         session.user.role = token.role as UserRole;
         session.accessTokenExpires = token.accessTokenExpires as number;
@@ -97,7 +98,8 @@ async function refreshAccessToken(token: JWT): Promise<JWT | null> {
     const res = await fetch(`${process.env.API_BASE_URL}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken: token.refreshToken }),
+      credentials: "include", // ✅ must be "include"
+      // body: JSON.stringify({ refreshToken: token.refreshToken }),
     });
 
     const refreshed: any = await res.json();
@@ -111,7 +113,6 @@ async function refreshAccessToken(token: JWT): Promise<JWT | null> {
       accessToken: refreshed.data.accessToken,
       accessTokenExpires:
         refreshed?.data?.accessTokenExpiresAt ?? token.accessTokenExpires,
-      refreshToken: refreshed.data.refreshToken ?? token.refreshToken,
     };
   } catch (err: any) {
     console.error("Error refreshing token", err.message || err);

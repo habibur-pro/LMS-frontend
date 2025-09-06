@@ -39,15 +39,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Course checkout: only logged-in students
-
-  if (/^\/courses\/[^\/]+\/checkout$/.test(path)) {
-    if (!token) return NextResponse.redirect(new URL("/login", req.url));
-    if (token.role !== "student")
-      return NextResponse.redirect(new URL("/", req.url));
-    return NextResponse.next();
-  }
-
   // Any other route: redirect to login
   if (!token) return NextResponse.redirect(new URL("/login", req.url));
 
@@ -64,6 +55,6 @@ export const config = {
     "/login",
     "/register",
     "/my-class/:path*",
-    "/courses/:path*",
+    "/checkout/:path*",
   ],
 };

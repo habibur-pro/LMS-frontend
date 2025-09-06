@@ -14,7 +14,7 @@ export const getCourses = async () => {
   } catch (error: any) {
     console.error("Error fetching products:", error);
     return {
-      products: null,
+      courses: null,
     };
   }
 };

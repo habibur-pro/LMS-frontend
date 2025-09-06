@@ -41,6 +41,17 @@ export default function Modules({ form }: { form: UseFormReturn<any> }) {
     name: "modules",
   });
 
+  const recalcModuleNumbers = () => {
+    const modules = form.getValues("modules");
+    form.setValue(
+      "modules",
+      modules.map((mod: any, idx: number) => ({
+        ...mod,
+        moduleNumber: idx + 1,
+      }))
+    );
+  };
+
   return (
     <Card>
       <CardHeader className="flex-row justify-between items-center space-y-0">
@@ -57,6 +68,7 @@ export default function Modules({ form }: { form: UseFormReturn<any> }) {
               title: "",
               lectures: [],
               isFree: false,
+              moduleNumber: moduleFields.length + 1,
             })
           }
         >
@@ -78,7 +90,10 @@ export default function Modules({ form }: { form: UseFormReturn<any> }) {
                   type="button"
                   variant="destructive"
                   size="sm"
-                  onClick={() => removeModule(moduleIndex)}
+                  onClick={() => {
+                    removeModule(moduleIndex);
+                    recalcModuleNumbers();
+                  }}
                 >
                   <Trash2 className="w-4 h-4 mr-1" /> Remove Module
                 </Button>
@@ -143,6 +158,17 @@ function LecturesField({
     name: `modules.${moduleIndex}.lectures`,
   });
 
+  const recalcLectureNumbers = () => {
+    const lectures = form.getValues(`modules.${moduleIndex}.lectures`);
+    form.setValue(
+      `modules.${moduleIndex}.lectures`,
+      lectures.map((lec: any, idx: number) => ({
+        ...lec,
+        lectureNumber: idx + 1,
+      }))
+    );
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -156,6 +182,8 @@ function LecturesField({
               title: "",
               content: "",
               contentType: LectureContentType.Video,
+              lectureNumber: fields.length + 1,
+              notes: [],
             })
           }
         >
@@ -179,7 +207,10 @@ function LecturesField({
                 type="button"
                 variant="destructive"
                 size="sm"
-                onClick={() => remove(lectureIndex)}
+                onClick={() => {
+                  remove(lectureIndex);
+                  recalcLectureNumbers();
+                }}
               >
                 <Trash2 className="w-4 h-4 mr-1" /> Remove Lecture
               </Button>
@@ -220,7 +251,6 @@ function LecturesField({
                           <SelectItem value={LectureContentType.Video}>
                             Video
                           </SelectItem>
-
                           <SelectItem value={LectureContentType.Text}>
                             Text
                           </SelectItem>
@@ -239,19 +269,69 @@ function LecturesField({
             <FormField
               control={form.control}
               name={`modules.${moduleIndex}.lectures.${lectureIndex}.content`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Content URL/Text</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      rows={3}
-                      placeholder="Enter video URL, PDF URL, or text content..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const contentType = form.watch(
+                  `modules.${moduleIndex}.lectures.${lectureIndex}.contentType`
+                );
+
+                return (
+                  <FormItem>
+                    <FormLabel>
+                      {contentType === "pdf"
+                        ? "PDF Notes (comma-separated)"
+                        : contentType === "video"
+                        ? "Video URL"
+                        : "Text Content"}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder={
+                          contentType === "pdf"
+                            ? "/pdfs/lecture1.pdf, /pdfs/lecture2.pdf"
+                            : contentType === "video"
+                            ? "Enter video URL..."
+                            : "Type text content..."
+                        }
+                        value={
+                          contentType === "pdf"
+                            ? form
+                                .getValues(
+                                  `modules.${moduleIndex}.lectures.${lectureIndex}.notes`
+                                )
+                                ?.join(", ") || ""
+                            : field.value
+                        }
+                        onChange={(e) => {
+                          if (contentType === "pdf") {
+                            const notesArray = e.target.value
+                              .split(",")
+                              .map((n) => n.trim())
+                              .filter(Boolean);
+
+                            const lectureData = form.getValues(
+                              `modules.${moduleIndex}.lectures.${lectureIndex}`
+                            );
+
+                            form.setValue(
+                              `modules.${moduleIndex}.lectures.${lectureIndex}`,
+                              {
+                                ...lectureData,
+                                notes: notesArray,
+                                contentType: LectureContentType.Pdf,
+                                content: lectureData.content || "pdf notes",
+                              }
+                            );
+                          } else {
+                            field.onChange(e);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
           </div>
         ))

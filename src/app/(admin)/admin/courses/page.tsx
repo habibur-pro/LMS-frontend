@@ -157,7 +157,7 @@ const Page = () => {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
+              <thead className="bg-gray-50 ">
                 <tr>
                   {[
                     "Course",
@@ -170,7 +170,7 @@ const Page = () => {
                   ].map((header) => (
                     <th
                       key={header}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-700  uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     >
                       {header}
                     </th>
@@ -178,12 +178,9 @@ const Page = () => {
                 </tr>
               </thead>
 
-              <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="bg-white  divide-y divide-gray-200 ">
                 {filteredData?.map((course) => (
-                  <tr
-                    key={course.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
+                  <tr key={course.id} className="hover:bg-gray-50 ">
                     {/* Course */}
                     <td className="px-6 py-4 flex items-center space-x-3">
                       <Image
@@ -194,7 +191,7 @@ const Page = () => {
                         className="w-12 h-12 rounded-lg object-cover"
                       />
                       <div>
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <div className="text-sm font-medium  ">
                           {course.title}
                         </div>
                       </div>
@@ -207,37 +204,33 @@ const Page = () => {
                     <td className="px-6 py-4">
                       {course?.totalSeat - course?.availableSeat}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                    <td className="px-6 py-4 text-sm  ">
                       {minutesToHours(course.duration)}
                     </td>
 
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                    <td className="px-6 py-4 text-sm text-gray-500 ">
                       {moment(course.createdAt).format("DD-MM-YYYY")}
                     </td>
 
                     {/* Actions */}
                     <td className="px-6 py-4 text-right flex gap-2 justify-end">
                       <Button
+                        className="bg-blue-500 hover:bg-blue-700"
                         size="sm"
-                        variant="outline"
-                        onClick={() => console.log("View", course.id)}
-                        title="View"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => console.log("Edit", course.id)}
-                        title="Edit"
+                        onClick={() =>
+                          router.push(`/admin/courses/${course.slug}/manage`)
+                        }
+                        title="Manage"
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
 
                       <Button
+                        className="bg-green-500 hover:bg-green-700"
                         size="sm"
-                        variant="outline"
-                        onClick={() => router.push(`/courses/${course.slug}`)}
+                        onClick={() =>
+                          router.push(`/admin/courses/${course.slug}`)
+                        }
                         title="Preview"
                       >
                         <ExternalLink className="w-4 h-4" />
