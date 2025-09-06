@@ -239,19 +239,68 @@ function LecturesField({
             <FormField
               control={form.control}
               name={`modules.${moduleIndex}.lectures.${lectureIndex}.content`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Content URL/Text</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      rows={3}
-                      placeholder="Enter video URL, PDF URL, or text content..."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const contentType = form.watch(
+                  `modules.${moduleIndex}.lectures.${lectureIndex}.contentType`
+                );
+
+                return (
+                  <FormItem>
+                    <FormLabel>
+                      {contentType === "pdf"
+                        ? "PDF Notes (comma-separated)"
+                        : contentType === "video"
+                        ? "Video URL"
+                        : "Text Content"}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder={
+                          contentType === "pdf"
+                            ? "/pdfs/lecture1.pdf, /pdfs/lecture2.pdf"
+                            : contentType === "video"
+                            ? "Enter video URL..."
+                            : "Type text content..."
+                        }
+                        value={
+                          contentType === "pdf"
+                            ? form
+                                .getValues(
+                                  `modules.${moduleIndex}.lectures.${lectureIndex}.notes`
+                                )
+                                ?.join(", ") || ""
+                            : field.value
+                        }
+                        onChange={(e) => {
+                          if (contentType === "pdf") {
+                            const notesArray = e.target.value
+                              .split(",")
+                              .map((n) => n.trim())
+                              .filter(Boolean);
+
+                            // Update multiple properties at once
+                            form.setValue(
+                              `modules.${moduleIndex}.lectures.${lectureIndex}`,
+                              {
+                                ...form.getValues(
+                                  `modules.${moduleIndex}.lectures.${lectureIndex}`
+                                ),
+                                contentType: LectureContentType.Pdf,
+                                content: "pdf notes",
+                                notes: notesArray,
+                              }
+                            );
+                          } else {
+                            field.onChange(e);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
           </div>
         ))

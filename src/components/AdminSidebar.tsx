@@ -2,6 +2,7 @@
 import {
   BarChart3,
   BookOpen,
+  Play,
   Settings,
   ShoppingBag,
   Users,
@@ -20,6 +21,7 @@ const AdminSidebar = () => {
     { name: "Courses", href: "/admin/courses", icon: BookOpen },
     { name: "Students", href: "/admin/students", icon: Users },
     { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
+    { name: "Lectures", href: "/admin/lectures", icon: Play },
     // { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     // { name: "Settings", href: "/admin/settings", icon: Settings },
   ];

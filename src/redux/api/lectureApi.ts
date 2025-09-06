@@ -12,7 +12,20 @@ export const lectureApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.MODULE, tagTypes.COURSE],
     }),
+    getLectures: build.query({
+      query: ({ courseId, moduleId }) => {
+        const params = new URLSearchParams();
+
+        if (courseId && courseId !== "all") params.append("courseId", courseId);
+        if (moduleId && moduleId !== "all") params.append("moduleId", moduleId);
+
+        return {
+          url: `/lectures?${params.toString()}`,
+          method: "GET",
+        };
+      },
+    }),
   }),
 });
 
-export const { useDeleteLectureMutation } = lectureApi;
+export const { useDeleteLectureMutation, useGetLecturesQuery } = lectureApi;

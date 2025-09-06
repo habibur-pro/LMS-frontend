@@ -4,6 +4,7 @@ import { boolean, z } from "zod";
 const lectureSchema = z.object({
   title: z.string().min(1, "Lecture title is required"),
   content: z.string().min(1, "Content is required"),
+  notes: z.array(z.string()).optional(), // for PDF links
   contentType: z.enum(
     [LectureContentType.Video, LectureContentType.Text, LectureContentType.Pdf],
     {

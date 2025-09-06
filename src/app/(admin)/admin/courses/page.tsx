@@ -215,13 +215,6 @@ const Page = () => {
                     {/* Actions */}
                     <td className="px-6 py-4 text-right flex gap-2 justify-end">
                       <Button
-                        size="sm"
-                        onClick={() => console.log("View", course.id)}
-                        title="View"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
                         className="bg-blue-500 hover:bg-blue-700"
                         size="sm"
                         onClick={() =>
@@ -235,7 +228,9 @@ const Page = () => {
                       <Button
                         className="bg-green-500 hover:bg-green-700"
                         size="sm"
-                        onClick={() => router.push(`/courses/${course.slug}`)}
+                        onClick={() =>
+                          router.push(`/admin/courses/${course.slug}`)
+                        }
                         title="Preview"
                       >
                         <ExternalLink className="w-4 h-4" />
