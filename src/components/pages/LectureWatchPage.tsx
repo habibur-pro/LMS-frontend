@@ -26,6 +26,7 @@ import {
   useGetSingleClassQuery,
   useNextLectureMutation,
   usePreviousLectureMutation,
+  useSetCurrentLectureMutation,
 } from "@/redux/api/myClassApi";
 import { IMyClass, IModule, ILecture } from "@/types";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ const LectureWatchPage = () => {
 
   const [nextLectureMutation] = useNextLectureMutation();
   const [prevLectureMutation] = usePreviousLectureMutation();
+  const [setCurrentMutation] = useSetCurrentLectureMutation();
 
   const myClass: IMyClass | undefined = myClassRes?.data;
 
@@ -79,7 +81,10 @@ const LectureWatchPage = () => {
   const handleNextLecture = async () => {
     if (!classId) return;
     try {
-      const res = await nextLectureMutation(classId).unwrap();
+      const res = await nextLectureMutation({
+        classId: classId,
+        lectureId: currentLecture?._id,
+      }).unwrap();
       if (res?.data?.currentLecture) {
         setCurrentModule(res.data.currentModule);
         setCurrentLecture(res.data.currentLecture);
@@ -100,6 +105,17 @@ const LectureWatchPage = () => {
       console.log("Previous lecture error:", err);
       toast.error(
         err?.data?.message || err?.message || "something went wrong!"
+      );
+    }
+  };
+
+  const handleSetCurrentLecture = async (lectureId: string) => {
+    try {
+      await setCurrentMutation({ classId: classId, lectureId }).unwrap();
+    } catch (error: any) {
+      console.log("Previous lecture error:", error);
+      toast.error(
+        error?.data?.message || error?.message || "something went wrong!"
       );
     }
   };
@@ -268,7 +284,7 @@ const LectureWatchPage = () => {
                             key={lecture._id}
                             onClick={() => {
                               if (!lecture.isLocked) {
-                                setCurrentLecture(lecture);
+                                handleSetCurrentLecture(lecture.id);
                               }
                             }}
                             className={`group flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 ${
