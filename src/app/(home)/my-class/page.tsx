@@ -19,7 +19,7 @@ const MyCourses = () => {
         <div className="">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">My Courses</h2>
-            <Link href="/">
+            <Link href="/courses">
               <Button variant="outline" className="bg-transparent">
                 Browse All Courses
               </Button>
@@ -36,7 +36,7 @@ const MyCourses = () => {
                 <p className="text-muted-foreground mb-6">
                   Start your learning journey by enrolling in your first course
                 </p>
-                <Link href="/">
+                <Link href="/courses">
                   <Button>Browse Courses</Button>
                 </Link>
               </CardContent>

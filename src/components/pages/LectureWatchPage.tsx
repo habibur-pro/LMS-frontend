@@ -40,9 +40,12 @@ const LectureWatchPage = () => {
     skip: !classId,
   });
 
-  const [nextLectureMutation] = useNextLectureMutation();
-  const [prevLectureMutation] = usePreviousLectureMutation();
-  const [setCurrentMutation] = useSetCurrentLectureMutation();
+  const [nextLectureMutation, { isLoading: nextLoading }] =
+    useNextLectureMutation();
+  const [prevLectureMutation, { isLoading: prevLoading }] =
+    usePreviousLectureMutation();
+  const [setCurrentMutation, { isLoading: currentLoading }] =
+    useSetCurrentLectureMutation();
 
   const myClass: IMyClass | undefined = myClassRes?.data;
 
@@ -52,21 +55,6 @@ const LectureWatchPage = () => {
 
   // Set default lecture when data loads
   useEffect(() => {
-    // if (myClass?.course?.modules?.length) {
-    //   const firstUnlockedModule = myClass.course.modules.find((mod) =>
-    //     mod.lectures.some((lec) => lec.isUnlocked)
-    //   );
-    //   if (firstUnlockedModule) {
-    //     setCurrentModule(firstUnlockedModule);
-    //     const firstUnlockedLecture = firstUnlockedModule.lectures.find(
-    //       (lec) => lec.isUnlocked
-    //     );
-    //     setCurrentLecture(
-    //       firstUnlockedLecture || firstUnlockedModule.lectures[0]
-    //     );
-    //   }
-    // }
-
     if (myClass?.currentLecture) {
       setCurrentLecture(myClass.currentLecture);
     }
@@ -119,6 +107,7 @@ const LectureWatchPage = () => {
       );
     }
   };
+  const isPlayerLoading = nextLoading || prevLoading || currentLoading;
 
   if (isLoading || !myClass)
     return <div className="text-center py-10">Loading...</div>;
@@ -127,6 +116,11 @@ const LectureWatchPage = () => {
     <div className="container mx-auto py-8 flex flex-col lg:flex-row gap-8">
       {/* Video Player */}
       <div className="flex-1 w-full">
+        {isPlayerLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
+            <div className="h-10 w-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
         {currentLecture && (
           <>
             <h2 className="text-xl font-semibold mb-4 text-foreground">
