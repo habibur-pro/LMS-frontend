@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,15 +26,13 @@ import {
   Loader,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { sampleCourses } from "@/lib/sample-course-data";
 import { useGetCourseQuery } from "@/redux/api/courseApi";
 import { usePlaceOrderMutation } from "@/redux/api/orderApi";
 import { useSession } from "next-auth/react";
 import { ICourse } from "@/types";
 import { toast } from "sonner";
 
-export default function PurchasePage() {
+const PurchasePageContent = () => {
   const searchParams = useSearchParams();
   const [slug, setSlug] = useState<string | null>(null);
   const courseSlug = searchParams.get("course");
@@ -154,5 +152,20 @@ export default function PurchasePage() {
         </div>
       </div>
     </div>
+  );
+};
+
+// The main export component that wraps the content in a Suspense boundary
+export default function PurchasePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <PurchasePageContent />
+    </Suspense>
   );
 }

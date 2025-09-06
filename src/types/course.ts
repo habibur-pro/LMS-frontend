@@ -16,7 +16,7 @@ export interface Module {
 export interface Course {
   id: string;
   title: string;
-  price: string;
+  price: number;
   thumbnail: string;
   description: string;
   modules: Module[];

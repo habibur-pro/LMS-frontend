@@ -51,7 +51,7 @@ export const sampleCourses: Course[] = [
   {
     id: "2",
     title: "React Development",
-    price: "$79",
+    price: 79,
     thumbnail: "/images/course.jpg",
     description:
       "Build modern web applications with React, hooks, and component architecture.",
@@ -79,7 +79,7 @@ export const sampleCourses: Course[] = [
   {
     id: "3",
     title: "Node.js Backend",
-    price: "$69",
+    price: 69,
     thumbnail: "/images/course.jpg",
     description:
       "Learn server-side development with Node.js, Express, and database integration.",
@@ -107,7 +107,7 @@ export const sampleCourses: Course[] = [
   {
     id: "4",
     title: "Python for Beginners",
-    price: "$39",
+    price: 39,
     thumbnail: "/images/course.jpg",
     description:
       "Start your programming journey with Python, the most beginner-friendly language.",
@@ -135,7 +135,7 @@ export const sampleCourses: Course[] = [
   {
     id: "5",
     title: "Python Beginner to Advance",
-    price: "$39",
+    price: 39,
     thumbnail: "/images/course.jpg",
     description:
       "Start your programming journey with Python, the most beginner-friendly language.",
