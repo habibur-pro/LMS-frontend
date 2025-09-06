@@ -11,12 +11,14 @@ const lectureSchema = z.object({
       message: "Content type is required",
     }
   ),
+  lectureNumber: z.number(),
 });
 
 const moduleSchema = z.object({
   title: z.string().min(1, "Module title is required"),
   lectures: z.array(lectureSchema).min(1, "At least one lecture is required"),
   isFree: boolean(),
+  moduleNumber: z.number(),
 });
 
 export const CourseFormSchema = z

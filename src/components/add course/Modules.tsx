@@ -57,6 +57,7 @@ export default function Modules({ form }: { form: UseFormReturn<any> }) {
               title: "",
               lectures: [],
               isFree: false,
+              moduleNumber: moduleFields.length + 1,
             })
           }
         >
@@ -156,6 +157,8 @@ function LecturesField({
               title: "",
               content: "",
               contentType: LectureContentType.Video,
+              lectureNumber: fields.length + 1, // auto-increment
+              notes: [],
             })
           }
         >
