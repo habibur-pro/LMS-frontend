@@ -36,6 +36,8 @@ import {
 } from "lucide-react";
 import { useGetLecturesQuery } from "@/redux/api/lectureApi";
 import { ILecture } from "@/types";
+import Link from "next/link";
+import { LectureContentType } from "@/enum";
 
 export default function AdminLecturesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -157,7 +159,6 @@ export default function AdminLecturesPage() {
                     <TableHead>Lecture Title</TableHead>
                     <TableHead>ContentType</TableHead>
                     <TableHead>Content</TableHead>
-                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -176,45 +177,33 @@ export default function AdminLecturesPage() {
                       </TableCell>
 
                       <TableCell>{lecture.contentType}</TableCell>
-                      <TableCell>{lecture.duration}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1">
-                          <FileText className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm">
-                            {lecture.resources?.length || 0} files
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {lecture.content ? (
-                          <Button variant="ghost" size="sm" asChild>
-                            <a
-                              href={lecture.content}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          </Button>
+                      <TableCell title={lecture.content}>
+                        {lecture.contentType === LectureContentType.Video ? (
+                          <Link
+                            href={lecture.content}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                          >
+                            {lecture.content}
+                          </Link>
+                        ) : lecture.contentType === LectureContentType.Text ? (
+                          <span className="text-wrap">{lecture.content}</span>
                         ) : (
-                          <span className="text-sm text-gray-400">
-                            No video
+                          <span>
+                            {lecture.notes?.length > 0 &&
+                              lecture.notes.map((item, i) => (
+                                <Link
+                                  key={item + i + "lecture"}
+                                  href={item}
+                                  target="_blank"
+                                  className="text-blue-500 block"
+                                >
+                                  {item}
+                                </Link>
+                              ))}
                           </span>
                         )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button variant="outline" size="sm">
-                            Edit
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 bg-transparent"
-                          >
-                            Delete
-                          </Button>
-                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
