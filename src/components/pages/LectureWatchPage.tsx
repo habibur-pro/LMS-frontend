@@ -29,6 +29,7 @@ import {
 } from "@/redux/api/myClassApi";
 import { IMyClass, IModule, ILecture } from "@/types";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const LectureWatchPage = () => {
   const params = useParams();
@@ -143,7 +144,7 @@ const LectureWatchPage = () => {
               {/* PDF */}
               {currentLecture.contentType === "pdf" && (
                 <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center p-6">
-                  <p className="mb-4 text-lg font-medium">PDF Document</p>
+                  {/* <p className="mb-4 text-lg font-medium">PDF Document</p>
                   <a
                     href={currentLecture.content}
                     target="_blank"
@@ -159,7 +160,27 @@ const LectureWatchPage = () => {
                     className="mt-3 inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80"
                   >
                     Download PDF
-                  </a>
+                  </a> */}
+
+                  {currentLecture?.notes?.length > 0 &&
+                    currentLecture?.notes?.map((item, index) => (
+                      <div
+                        key={item + index}
+                        className="flex flex-col justify-center items-center"
+                      >
+                        <Link className="block text-blue-400" href={item}>
+                          {item}
+                        </Link>
+                        <a
+                          href={item}
+                          target="_blank"
+                          download
+                          className="mt-3 inline-block bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 w-fit"
+                        >
+                          Download PDF
+                        </a>
+                      </div>
+                    ))}
                 </div>
               )}
             </div>

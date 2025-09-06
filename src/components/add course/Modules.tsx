@@ -41,6 +41,17 @@ export default function Modules({ form }: { form: UseFormReturn<any> }) {
     name: "modules",
   });
 
+  const recalcModuleNumbers = () => {
+    const modules = form.getValues("modules");
+    form.setValue(
+      "modules",
+      modules.map((mod: any, idx: number) => ({
+        ...mod,
+        moduleNumber: idx + 1,
+      }))
+    );
+  };
+
   return (
     <Card>
       <CardHeader className="flex-row justify-between items-center space-y-0">
@@ -79,7 +90,10 @@ export default function Modules({ form }: { form: UseFormReturn<any> }) {
                   type="button"
                   variant="destructive"
                   size="sm"
-                  onClick={() => removeModule(moduleIndex)}
+                  onClick={() => {
+                    removeModule(moduleIndex);
+                    recalcModuleNumbers();
+                  }}
                 >
                   <Trash2 className="w-4 h-4 mr-1" /> Remove Module
                 </Button>
@@ -144,6 +158,17 @@ function LecturesField({
     name: `modules.${moduleIndex}.lectures`,
   });
 
+  const recalcLectureNumbers = () => {
+    const lectures = form.getValues(`modules.${moduleIndex}.lectures`);
+    form.setValue(
+      `modules.${moduleIndex}.lectures`,
+      lectures.map((lec: any, idx: number) => ({
+        ...lec,
+        lectureNumber: idx + 1,
+      }))
+    );
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
@@ -157,7 +182,7 @@ function LecturesField({
               title: "",
               content: "",
               contentType: LectureContentType.Video,
-              lectureNumber: fields.length + 1, // auto-increment
+              lectureNumber: fields.length + 1,
               notes: [],
             })
           }
@@ -182,7 +207,10 @@ function LecturesField({
                 type="button"
                 variant="destructive"
                 size="sm"
-                onClick={() => remove(lectureIndex)}
+                onClick={() => {
+                  remove(lectureIndex);
+                  recalcLectureNumbers();
+                }}
               >
                 <Trash2 className="w-4 h-4 mr-1" /> Remove Lecture
               </Button>
@@ -223,7 +251,6 @@ function LecturesField({
                           <SelectItem value={LectureContentType.Video}>
                             Video
                           </SelectItem>
-
                           <SelectItem value={LectureContentType.Text}>
                             Text
                           </SelectItem>
@@ -282,16 +309,17 @@ function LecturesField({
                               .map((n) => n.trim())
                               .filter(Boolean);
 
-                            // Update multiple properties at once
+                            const lectureData = form.getValues(
+                              `modules.${moduleIndex}.lectures.${lectureIndex}`
+                            );
+
                             form.setValue(
                               `modules.${moduleIndex}.lectures.${lectureIndex}`,
                               {
-                                ...form.getValues(
-                                  `modules.${moduleIndex}.lectures.${lectureIndex}`
-                                ),
-                                contentType: LectureContentType.Pdf,
-                                content: "pdf notes",
+                                ...lectureData,
                                 notes: notesArray,
+                                contentType: LectureContentType.Pdf,
+                                content: lectureData.content || "pdf notes",
                               }
                             );
                           } else {

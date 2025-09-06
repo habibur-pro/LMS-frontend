@@ -8,7 +8,6 @@ declare module "next-auth" {
   interface User {
     id: string;
     isEmailVerified: boolean;
-    refreshToken: string;
     accessToken?: string;
     accessTokenExpires: number;
     accessTokenExpiresAt: number;
@@ -19,7 +18,6 @@ declare module "next-auth" {
     user: {
       id: string;
       isEmailVerified: boolean;
-      refreshToken: string;
       accessToken: string;
       role: UserRole;
       accessTokenExpires: number;
@@ -33,7 +31,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     isEmailVerified: boolean;
-    refreshToken: string;
     accessToken: string;
     accessTokenExpires: number;
     role: UserRole;
