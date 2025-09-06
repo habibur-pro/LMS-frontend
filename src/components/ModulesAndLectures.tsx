@@ -206,15 +206,13 @@ const ModulesAndLectures = ({ course }: { course: ICourse }) => {
           </CardContent>
         </Card>
       ) : (
-        course.modules.map((module) => (
+        course.modules.map((module, index) => (
           <Card key={module.id}>
             <CardHeader>
               <div className="lg:flex space-y-3 lg:space-y-0 justify-between items-start ">
                 <div>
                   <CardTitle className="flex items-center space-x-2">
-                    <Badge variant="secondary">
-                      Module {module.moduleNumber}
-                    </Badge>
+                    <Badge variant="secondary">Module {index + 1}</Badge>
                     <span>{module.title}</span>
                   </CardTitle>
                   <CardDescription>
