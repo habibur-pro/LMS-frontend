@@ -60,8 +60,8 @@ export default function Header() {
                     variant="ghost"
                     className="relative h-8 w-8 rounded-full"
                   >
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>
+                    <Avatar className="h-12 w-12">
+                      <AvatarFallback className="text-lg">
                         {user?.name?.charAt(0)?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
