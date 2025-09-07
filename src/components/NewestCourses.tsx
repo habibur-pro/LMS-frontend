@@ -2,17 +2,7 @@
 import { sampleCourses } from "@/data/sampleCourses";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import {
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Clock12,
-  Star,
-} from "lucide-react";
-import { Card, CardContent } from "./ui/card";
-import Image from "next/image";
-import { Badge } from "./ui/badge";
-
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -29,9 +19,7 @@ const NewestCourses = ({ courses }: { courses: Array<ICourse> }) => {
 
   // Update active bullet on slide change
   const handleSlideChange = (swiper: any) => {
-    const spv = swiper.params.slidesPerView;
-    const currentGroup = Math.floor(swiper.activeIndex / spv);
-    setActiveBullet(currentGroup);
+    setActiveBullet(swiper.realIndex); // realIndex ensures one-by-one tracking
   };
 
   // Attach navigation buttons after Swiper is initialized
@@ -46,15 +34,14 @@ const NewestCourses = ({ courses }: { courses: Array<ICourse> }) => {
 
   // Calculate number of pagination bullets dynamically
   const getPaginationLength = () => {
-    if (!swiperInstance) return Math.ceil(sampleCourses.length / 3);
-    const spv = swiperInstance.params.slidesPerView;
-    return Math.ceil(sampleCourses.length / spv);
+    if (!swiperInstance) return courses.length;
+    return courses.length; // One bullet per course for one-by-one scrolling
   };
 
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4 md:gap-0">
           <div>
             <h2 className="text-4xl font-bold mb-4 text-gray-900">
               Newest Courses
@@ -80,7 +67,7 @@ const NewestCourses = ({ courses }: { courses: Array<ICourse> }) => {
             ref={prevRef}
             variant="outline"
             size="icon"
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-12 h-12 z-10"
+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-10 sm:w-12 h-10 sm:h-12 z-10"
           >
             <ChevronLeft className="w-6 h-6" />
           </Button>
@@ -90,7 +77,7 @@ const NewestCourses = ({ courses }: { courses: Array<ICourse> }) => {
             ref={nextRef}
             variant="outline"
             size="icon"
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-12 h-12 z-10"
+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-10 sm:w-12 h-10 sm:h-12 z-10"
           >
             <ChevronRight className="w-6 h-6" />
           </Button>
@@ -100,21 +87,23 @@ const NewestCourses = ({ courses }: { courses: Array<ICourse> }) => {
             onSwiper={setSwiperInstance}
             onSlideChange={handleSlideChange}
             spaceBetween={20}
-            slidesPerView={1}
+            slidesPerView={1} // Always start with 1
+            slidesPerGroup={1} // Scroll one by one
+            loop={false}
             autoplay={{
-              delay: 1000, // 3 seconds
-              disableOnInteraction: false, // continue autoplay after user interaction
+              delay: 3000,
+              disableOnInteraction: false,
             }}
             breakpoints={{
-              640: { slidesPerView: 1 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
+              640: { slidesPerView: 1, slidesPerGroup: 1 },
+              768: { slidesPerView: 2, slidesPerGroup: 1 },
+              1024: { slidesPerView: 3, slidesPerGroup: 1 },
             }}
           >
             {courses?.length > 0 &&
               courses.map((course) => (
                 <SwiperSlide key={course.id}>
-                <CourseCard course={course}/>
+                  <CourseCard course={course} />
                 </SwiperSlide>
               ))}
           </Swiper>
@@ -129,11 +118,7 @@ const NewestCourses = ({ courses }: { courses: Array<ICourse> }) => {
                     ? "bg-purple-600 scale-125"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
-                onClick={() =>
-                  swiperInstance?.slideTo(
-                    index * (swiperInstance?.params.slidesPerView || 1)
-                  )
-                }
+                onClick={() => swiperInstance?.slideTo(index)}
               />
             ))}
           </div>

@@ -112,7 +112,7 @@ const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
                     <div key={module?.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="font-semibold ">
-                          Module {module?.moduleNumber}: {module?.title}
+                          Module {index + 1}: {module?.title}
                         </h3>
                         <Badge variant="secondary">
                           {module?.lectures?.length || 0} lectures

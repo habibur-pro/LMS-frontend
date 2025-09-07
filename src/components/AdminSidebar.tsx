@@ -22,8 +22,6 @@ const AdminSidebar = () => {
     { name: "Students", href: "/admin/students", icon: Users },
     { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
     { name: "Lectures", href: "/admin/lectures", icon: Play },
-    // { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-    // { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
   return (
@@ -43,7 +41,9 @@ const AdminSidebar = () => {
         }`}
       >
         <div className="flex items-center justify-between h-16 px-6 border-b">
-          <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
+          <Link href="/" className="text-xl font-bold text-gray-900 block">
+            Admin Panel
+          </Link>
           <Button
             variant="ghost"
             size="sm"

@@ -45,35 +45,52 @@ const Categories = () => {
     },
     { name: "Cloud Computing", icon: Globe, count: 31, color: "bg-blue-600" },
   ];
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentCategorySlide, setCurrentCategorySlide] = useState(0);
 
+  const [currentCategorySlide, setCurrentCategorySlide] = useState(0);
+  const [itemsPerSlide, setItemsPerSlide] = useState(4);
+
+  // Dynamically set items per slide based on screen width
+  useEffect(() => {
+    const updateItemsPerSlide = () => {
+      if (window.innerWidth < 640) setItemsPerSlide(1); // mobile
+      else if (window.innerWidth < 1024) setItemsPerSlide(2); // tablet
+      else setItemsPerSlide(4); // desktop
+    };
+
+    updateItemsPerSlide();
+    window.addEventListener("resize", updateItemsPerSlide);
+
+    return () => window.removeEventListener("resize", updateItemsPerSlide);
+  }, []);
+
+  // Auto-slide
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentCategorySlide(
-        (prev) => (prev + 1) % Math.ceil(categories.length / 4)
+        (prev) => (prev + 1) % Math.ceil(categories.length / itemsPerSlide)
       );
     }, 4000);
     return () => clearInterval(timer);
-  }, []);
+  }, [itemsPerSlide]);
 
   const nextCategorySlide = () => {
     setCurrentCategorySlide(
-      (prev) => (prev + 1) % Math.ceil(categories.length / 4)
+      (prev) => (prev + 1) % Math.ceil(categories.length / itemsPerSlide)
     );
   };
 
   const prevCategorySlide = () => {
     setCurrentCategorySlide(
       (prev) =>
-        (prev - 1 + Math.ceil(categories.length / 4)) %
-        Math.ceil(categories.length / 4)
+        (prev - 1 + Math.ceil(categories.length / itemsPerSlide)) %
+        Math.ceil(categories.length / itemsPerSlide)
     );
   };
 
   return (
     <section className="py-24 bg-gray-50">
       <div className="container mx-auto px-4">
+        {/* Header */}
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-purple-100 text-purple-700 border-purple-200">
             Explore Topics
@@ -86,6 +103,7 @@ const Categories = () => {
           </p>
         </div>
 
+        {/* Slider */}
         <div className="relative max-w-6xl mx-auto">
           <div className="overflow-hidden">
             <div
@@ -95,15 +113,26 @@ const Categories = () => {
               }}
             >
               {Array.from(
-                { length: Math.ceil(categories.length / 4) },
+                { length: Math.ceil(categories.length / itemsPerSlide) },
                 (_, slideIndex) => (
                   <div key={slideIndex} className="w-full flex-shrink-0">
-                    <div className="grid grid-cols-4 gap-6 px-4">
+                    <div
+                      className={`grid gap-6 px-4 ${
+                        itemsPerSlide === 1
+                          ? "grid-cols-1"
+                          : itemsPerSlide === 2
+                          ? "grid-cols-2"
+                          : "grid-cols-4"
+                      }`}
+                    >
                       {categories
-                        .slice(slideIndex * 4, slideIndex * 4 + 4)
+                        .slice(
+                          slideIndex * itemsPerSlide,
+                          slideIndex * itemsPerSlide + itemsPerSlide
+                        )
                         .map((category, index) => (
                           <Card
-                            key={slideIndex * 4 + index}
+                            key={slideIndex * itemsPerSlide + index}
                             className="group hover:shadow-xl transition-all duration-500 hover:scale-105 cursor-pointer bg-white border-0 shadow-lg"
                           >
                             <CardContent className="p-8 text-center">
@@ -112,7 +141,7 @@ const Categories = () => {
                               >
                                 <category.icon className="w-10 h-10 text-white" />
                               </div>
-                              <h3 className="font-bold text-xl  text-gray-900 group-hover:text-purple-600 transition-colors">
+                              <h3 className="font-bold text-xl text-gray-900 group-hover:text-purple-600 transition-colors">
                                 {category.name}
                               </h3>
                             </CardContent>
@@ -125,10 +154,11 @@ const Categories = () => {
             </div>
           </div>
 
+          {/* Navigation Buttons */}
           <Button
             variant="outline"
             size="icon"
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-12 h-12"
+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-10 sm:w-12 h-10 sm:h-12"
             onClick={prevCategorySlide}
           >
             <ChevronLeft className="w-6 h-6" />
@@ -136,15 +166,16 @@ const Categories = () => {
           <Button
             variant="outline"
             size="icon"
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-12 h-12"
+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white shadow-xl border-2 border-gray-200 hover:bg-gray-50 transition-all duration-300 w-10 sm:w-12 h-10 sm:h-12"
             onClick={nextCategorySlide}
           >
             <ChevronRight className="w-6 h-6" />
           </Button>
 
+          {/* Dots */}
           <div className="flex justify-center mt-8 space-x-3">
             {Array.from(
-              { length: Math.ceil(categories.length / 4) },
+              { length: Math.ceil(categories.length / itemsPerSlide) },
               (_, index) => (
                 <button
                   key={index}
